@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>GPT Notes</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" href="./styles/index.processed.css"/>
+		<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+	</head>
+	<body>
+		<div id="application">
+			<div id="history-section">
+				<div id="app-logo">
+					<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#e8eaed">
+						<path d="M80-160v-60h800v60H80Zm89-160v-316h60v316h-60Zm159 0v-480h60v480h-60Zm159 0v-480h60v480h-60Zm275 0L597-600l54-30 162 280-51 30Z"/>
+					</svg>
+					<div id="app-title">GPT Notes</div>
+				</div>
+				<div id="history-items"></div>
+				<div id="new-chat-button" class="clickable">
+					<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+						<path d="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z"/>
+					</svg>
+					New Chat
+				</div>
+			</div>
+			<div id="content-section">
+				<div id="header-section">
+					<div class="flex-one"></div>
+					<div id="merge-notes-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"/></svg>
+						Merge
+					</div>
+					<div id="deselect-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M768-141 615-294H294v-321L90-819l51-51 678 678-51 51ZM366-366h177L366-543v177Zm300-81-72-72v-75h-75l-72-72h219v219ZM216-216v72q-29.7 0-50.85-21.15Q144-186.3 144-216h72Zm-72-78v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72h72v72h-72Zm150 450v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 600v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 600v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 450v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72q29.7 0 50.85 21.15Q816-773.7 816-744h-72Z"/></svg>
+						Deselect
+					</div>
+					<div id="new-note-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+							<path d="M444-288h72v-156h156v-72H516v-156h-72v156H288v72h156v156ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/>
+						</svg>
+						New Note
+					</div>
+					<div id="settings-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+							<path d="m403-96-22-114q-23-9-44.5-21T296-259l-110 37-77-133 87-76q-2-12-3-24t-1-25q0-13 1-25t3-24l-87-76 77-133 110 37q19-16 40.5-28t44.5-21l22-114h154l22 114q23 9 44.5 21t40.5 28l110-37 77 133-87 76q2 12 3 24t1 25q0 13-1 25t-3 24l87 76-77 133-110-37q-19 16-40.5 28T579-210L557-96H403Zm59-72h36l19-99q38-7 71-26t57-48l96 32 18-30-76-67q6-17 9.5-35.5T696-480q0-20-3.5-38.5T683-554l76-67-18-30-96 32q-24-29-57-48t-71-26l-19-99h-36l-19 99q-38 7-71 26t-57 48l-96-32-18 30 76 67q-6 17-9.5 35.5T264-480q0 20 3.5 38.5T277-406l-76 67 18 30 96-32q24 29 57 48t71 26l19 99Zm18-168q60 0 102-42t42-102q0-60-42-102t-102-42q-60 0-102 42t-42 102q0 60 42 102t102 42Zm0-144Z"/>
+						</svg>
+						Settings
+					</div>
+				</div>
+				<div id="activity-section">
+					<div id="chat-section">
+						<div id="chat"></div>
+						<div id="selection-section"></div>
+						<div id="input-section">
+							<div id="input-text-section">
+								<div class="input-wrapper flex-one">
+									<input id="chat-input" type="text" placeholder="Enter your chat message..."/>
+								</div>
+							</div>
+							<div id="input-actions-section">
+								<div id="chat-send-button" class="clickable">
+									<svg style="margin-right: 8px;" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+										<path d="M144-192v-576l720 288-720 288Zm72-107 454-181-454-181v109l216 72-216 72v109Zm0 0v-362 362Z"/>
+									</svg>
+									SEND
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="editor-section">
+						<div class="input-wrapper">
+							<span>Note Title</span>
+							<input id="editor-title-input" placeholder="Enter a title...">
+						</div>
+						<div class="input-wrapper">
+							<span>Note Tags</span>
+							<input id="editor-tags-input" placeholder="Tag 1, Tag 2, Tag 3...">
+						</div>
+						<div id="editor-files"></div>
+						<div class="textarea-wrapper flex-one">
+							<span>Note Content</span>
+							<textarea id="editor-content-input" placeholder="Enter a content..." rows="1"></textarea>
+						</div>
+						<div id="editor-actions-section">
+							<div id="editor-attach-file" class="clickable-light" style="width: 100px;">
+								<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+									<path d="M720-330q0 104-73 177T470-80q-104 0-177-73t-73-177v-370q0-75 52.5-127.5T400-880q75 0 127.5 52.5T580-700v350q0 46-32 78t-78 32q-46 0-78-32t-32-78v-370h80v370q0 13 8.5 21.5T470-320q13 0 21.5-8.5T500-350v-350q-1-42-29.5-71T400-800q-42 0-71 29t-29 71v370q-1 71 49 120.5T470-160q70 0 119-49.5T640-330v-390h80v390Z"/>
+								</svg>
+								<input type="file" id="editor-file-input" class="attachment-input"/>
+							</div>
+							<div class="flex-one"></div>
+							<div id="editor-cancel-button" class="clickable-light" style="width: 100px;">
+								<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+									<path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/>
+								</svg>
+								Cancel
+							</div>
+							<div style="width: 16px;"></div>
+							<div id="editor-save-button" class="clickable-light" style="width: 100px;">
+								<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
+									<path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/>
+								</svg>
+								Save Note
+							</div>
+
+						</div>
+					</div>
+					<div id="notes-section"></div>
+					<div id="settings-section"></div>
+				</div>
+				<div id="footer-section">This is a note keeping application that uses <a href="https://openrouter.ai/docs" target="_blank">OpenRouter text completion API</a>. Notes, settings and chat history are stored in Browser's Local Storage</div>
+			</div>
+		</div>
+		<div id="toast-section"></div>
+		<script src="./scripts/model.js"></script>
+		<script src="./scripts/nano.js"></script>
+		<script src="./scripts/index.js"></script>
+		<script src="./scripts/chat.js"></script>
+		<script src="./scripts/loader.js"></script>
+		<script src="./scripts/notes.js"></script>
+		<script src="./scripts/settings.js"></script>
+		<script>
+			visibility(model, "editor-section", "editorVisible", false);
+			visibility(model, "settings-section", "settingsVisible", false);
+			visibility(model, "merge-notes-button", "mergeVisible", false);
+			visibility(model, "deselect-button", "deselectVisible", false);
+			visibility(model, "chat-section", "chatVisible", true);
+			
+			model.listen("selection", value => {
+				model.set("deselectVisible", value.size > 0);
+			});
+			
+			$("settings-button").onclick(event => toggle(model, "settingsVisible"));
+			
+			$("merge-notes-button").onclick(event => {
+				let parent = model.get("parent");
+				let children = model.get("children");
+				children.forEach(child => child["parentId"] = parent["uuid"]);
+				model.get("selection").clear();
+				model.update("selection");
+				model.update("notes");
+				toast("Merged!");
+			});
+			
+			$("deselect-button").onclick(event => {
+				model.get("selection").clear();
+				model.update("selection");
+			});
+			
+			$("new-note-button").onclick(event => {
+				saveEditedNote();
+				let uuid = createUuid()
+				model.get("notes").unshift({uuid: uuid, tags: [], title: "", content: ""});
+				model.set("editUuid", uuid);
+				model.update("notes");
+				$("editor-title-input").get().value = "";
+				$("editor-tags-input").get().value = "";
+				$("editor-content-input").get().value = "";
+				model.set("chatVisible", false);
+				model.set("editorVisible", true);
+			});
+			
+			$("editor-cancel-button").onclick(event => {
+				model.set("editorVisible", false);
+				model.set("chatVisible", true);
+				model.remove("editUuid");
+				$("editor-title-input").get().value = "";
+				$("editor-tags-input").get().value = "";
+				$("editor-content-input").get().value = "";
+			});
+			
+			$("editor-save-button").onclick(event => {
+				saveEditedNote();
+				$("editor-title-input").get().value = "";
+				$("editor-tags-input").get().value = "";
+				$("editor-content-input").get().value = "";
+				model.set("editorVisible", false);
+				model.set("chatVisible", true);
+			});
+		</script>
+	</body>
+</html>
