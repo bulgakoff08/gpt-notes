@@ -71,6 +71,10 @@ const $ = function (selector, context = document) {
 			element.innerText = text;
 			return this;
 		},
+		tooltip: function (tooltip) {
+			element.setAttribute("title", tooltip);
+			return this;
+		},
 		html: function (html) {
 			element.innerHTML = html;
 			return this;

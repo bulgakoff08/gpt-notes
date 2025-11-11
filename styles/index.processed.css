@@ -28,13 +28,24 @@ body a:visited {
   display: flex;
   flex-direction: column;
   max-height: 100vh;
-  width: 350px;
+  width: 400px;
   padding-left: 8px;
   padding-right: 16px;
   box-sizing: border-box;
   border-right: solid 1px #252525;
+  max-height: 100vh;
+  overflow-y: scroll;
   background-color: #060606;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='450' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='.1'%3E%3Cpolygon fill='%23444' points='90 150 0 300 180 300'/%3E%3Cpolygon points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23AAA' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23DDD' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23999' points='450 150 540 0 360 0'/%3E%3Cpolygon points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23DDD' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23444' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23DDD' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23444' points='990 150 1080 0 900 0'/%3E%3Cpolygon fill='%23DDD' points='90 450 0 600 180 600'/%3E%3Cpolygon points='90 450 180 300 0 300'/%3E%3Cpolygon fill='%23666' points='270 450 180 600 360 600'/%3E%3Cpolygon fill='%23AAA' points='270 450 360 300 180 300'/%3E%3Cpolygon fill='%23DDD' points='450 450 360 600 540 600'/%3E%3Cpolygon fill='%23999' points='450 450 540 300 360 300'/%3E%3Cpolygon fill='%23999' points='630 450 540 600 720 600'/%3E%3Cpolygon fill='%23FFF' points='630 450 720 300 540 300'/%3E%3Cpolygon points='810 450 720 600 900 600'/%3E%3Cpolygon fill='%23DDD' points='810 450 900 300 720 300'/%3E%3Cpolygon fill='%23AAA' points='990 450 900 600 1080 600'/%3E%3Cpolygon fill='%23444' points='990 450 1080 300 900 300'/%3E%3Cpolygon fill='%23222' points='90 750 0 900 180 900'/%3E%3Cpolygon points='270 750 180 900 360 900'/%3E%3Cpolygon fill='%23DDD' points='270 750 360 600 180 600'/%3E%3Cpolygon points='450 750 540 600 360 600'/%3E%3Cpolygon points='630 750 540 900 720 900'/%3E%3Cpolygon fill='%23444' points='630 750 720 600 540 600'/%3E%3Cpolygon fill='%23AAA' points='810 750 720 900 900 900'/%3E%3Cpolygon fill='%23666' points='810 750 900 600 720 600'/%3E%3Cpolygon fill='%23999' points='990 750 900 900 1080 900'/%3E%3Cpolygon fill='%23999' points='180 0 90 150 270 150'/%3E%3Cpolygon fill='%23444' points='360 0 270 150 450 150'/%3E%3Cpolygon fill='%23FFF' points='540 0 450 150 630 150'/%3E%3Cpolygon points='900 0 810 150 990 150'/%3E%3Cpolygon fill='%23222' points='0 300 -90 450 90 450'/%3E%3Cpolygon fill='%23FFF' points='0 300 90 150 -90 150'/%3E%3Cpolygon fill='%23FFF' points='180 300 90 450 270 450'/%3E%3Cpolygon fill='%23666' points='180 300 270 150 90 150'/%3E%3Cpolygon fill='%23222' points='360 300 270 450 450 450'/%3E%3Cpolygon fill='%23FFF' points='360 300 450 150 270 150'/%3E%3Cpolygon fill='%23444' points='540 300 450 450 630 450'/%3E%3Cpolygon fill='%23222' points='540 300 630 150 450 150'/%3E%3Cpolygon fill='%23AAA' points='720 300 630 450 810 450'/%3E%3Cpolygon fill='%23666' points='720 300 810 150 630 150'/%3E%3Cpolygon fill='%23FFF' points='900 300 810 450 990 450'/%3E%3Cpolygon fill='%23999' points='900 300 990 150 810 150'/%3E%3Cpolygon points='0 600 -90 750 90 750'/%3E%3Cpolygon fill='%23666' points='0 600 90 450 -90 450'/%3E%3Cpolygon fill='%23AAA' points='180 600 90 750 270 750'/%3E%3Cpolygon fill='%23444' points='180 600 270 450 90 450'/%3E%3Cpolygon fill='%23444' points='360 600 270 750 450 750'/%3E%3Cpolygon fill='%23999' points='360 600 450 450 270 450'/%3E%3Cpolygon fill='%23666' points='540 600 630 450 450 450'/%3E%3Cpolygon fill='%23222' points='720 600 630 750 810 750'/%3E%3Cpolygon fill='%23FFF' points='900 600 810 750 990 750'/%3E%3Cpolygon fill='%23222' points='900 600 990 450 810 450'/%3E%3Cpolygon fill='%23DDD' points='0 900 90 750 -90 750'/%3E%3Cpolygon fill='%23444' points='180 900 270 750 90 750'/%3E%3Cpolygon fill='%23FFF' points='360 900 450 750 270 750'/%3E%3Cpolygon fill='%23AAA' points='540 900 630 750 450 750'/%3E%3Cpolygon fill='%23FFF' points='720 900 810 750 630 750'/%3E%3Cpolygon fill='%23222' points='900 900 990 750 810 750'/%3E%3Cpolygon fill='%23222' points='1080 300 990 450 1170 450'/%3E%3Cpolygon fill='%23FFF' points='1080 300 1170 150 990 150'/%3E%3Cpolygon points='1080 600 990 750 1170 750'/%3E%3Cpolygon fill='%23666' points='1080 600 1170 450 990 450'/%3E%3Cpolygon fill='%23DDD' points='1080 900 1170 750 990 750'/%3E%3C/g%3E%3C/svg%3E");
+}
+#history-section::-webkit-scrollbar {
+  width: 10px;
+}
+#history-section::-webkit-scrollbar-thumb {
+  background-color: #353535;
+}
+#history-section::-webkit-scrollbar-track {
+  background-color: #292929;
 }
 #history-section #app-logo {
   display: flex;
@@ -82,12 +93,47 @@ body a:visited {
   font-size: 8pt;
   color: #89929b;
 }
-#history-section .chat-history-entry .chat-history-actions {
+#history-section #archive-items {
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+#history-section #archive-items .chat-history-entry {
+  background-color: #292929;
+}
+#history-section #archive-items .chat-history-entry:hover {
+  background-color: #3d3d3d;
+}
+#history-section #archive-items .selected {
+  background-color: #353535;
+  border: solid 1px #54995D;
+  border-left: solid 5px #54995D;
+}
+#history-section #archive-items .archive-title {
+  color: #89929b;
+  font-size: 9pt;
+  font-weight: bold;
+}
+#history-section #archive-items .archive-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  margin-left: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #353535;
+  font-weight: bold;
+  font-size: 9pt;
+  margin-right: 8px;
+}
+
+.list-item-actions {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
-#history-section .chat-history-entry .chat-history-actions div {
+.list-item-actions div {
   color: #89929b;
   font-size: 8pt;
   border: solid 1px #37373d;
@@ -96,7 +142,7 @@ body a:visited {
   padding: 2px 4px;
   margin-left: 4px;
 }
-#history-section .chat-history-entry .chat-history-actions div:hover {
+.list-item-actions div:hover {
   color: #faa356;
   cursor: pointer;
 }
@@ -131,12 +177,12 @@ body a:visited {
   display: flex;
   align-items: stretch;
   box-sizing: border-box;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 90px);
   flex: 1;
 }
 
 #chat-section {
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 100px);
   align-items: center;
   margin-left: 16px;
   width: 700px;
@@ -150,8 +196,8 @@ body a:visited {
   flex: 1;
   padding: 16px;
   overflow-y: scroll;
-  height: calc(100vh - 215px);
-  max-height: calc(100vh - 215px);
+  height: calc(100vh - 240px);
+  max-height: calc(100vh - 240px);
 }
 #chat-section #chat::-webkit-scrollbar {
   width: 10px;
@@ -166,8 +212,8 @@ body a:visited {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height: 45px;
-  max-height: 45px;
+  height: 70px;
+  max-height: 70px;
   padding-top: 8px;
   overflow: hidden;
   align-content: flex-start;
@@ -250,20 +296,22 @@ body a:visited {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  max-height: 45px;
-  overflow: hidden;
+  padding-top: 8px;
+  padding-bottom: 8px;
   align-content: flex-start;
   box-sizing: border-box;
 }
 #editor-section #editor-files .editor-file-wrapper {
   font-size: 10pt;
   display: flex;
+  box-sizing: border-box;
+  min-width: 32%;
   align-items: center;
   border: solid 1px #37373d;
   border-left: solid 5px #37373d;
   margin-right: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 2px;
+  margin-bottom: 2px;
   padding: 4px;
   cursor: pointer;
 }
@@ -276,10 +324,10 @@ body a:visited {
   flex-wrap: wrap;
   box-sizing: border-box;
   overflow-y: scroll;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 110px);
+  align-content: flex-start;
   padding-left: 32px;
   padding-right: 32px;
-  align-content: flex-start;
   flex: 1;
 }
 #notes-section::-webkit-scrollbar {
@@ -304,11 +352,15 @@ body a:visited {
 }
 #notes-section .note::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 #notes-section .note::-webkit-scrollbar-thumb {
   background-color: #353535;
 }
 #notes-section .note::-webkit-scrollbar-track {
+  background-color: #252525;
+}
+#notes-section .note::-webkit-scrollbar-corner {
   background-color: #252525;
 }
 #notes-section .note .note-content-wrapper {
@@ -332,34 +384,6 @@ body a:visited {
   color: #89929b;
   font-size: 10px;
   margin-right: 8px;
-}
-#notes-section .note .note-content-wrapper .note-tags-wrapper {
-  display: flex;
-}
-#notes-section .note .note-content-wrapper .note-tags-wrapper .note-tag-bean {
-  display: flex;
-  border: solid 1px #37373d;
-  border-radius: 16px;
-  background-color: #353535;
-  margin: 4px;
-  margin-left: 0;
-  font-size: 12px;
-  cursor: pointer;
-}
-#notes-section .note .note-content-wrapper .note-tags-wrapper .note-tag-bean .tag-bean-hashtag {
-  background-color: #252525;
-  border-radius: 16px 0 0 16px;
-  text-align: center;
-  font-weight: bold;
-  color: #89929b;
-  padding: 2px 4px;
-  padding-left: 6px;
-}
-#notes-section .note .note-content-wrapper .note-tags-wrapper .note-tag-bean .tag-bean-text {
-  padding: 2px 4px;
-}
-#notes-section .note .note-content-wrapper .note-tags-wrapper .note-tag-bean .tag-bean-text:hover {
-  color: #faa356;
 }
 #notes-section .note .note-content-wrapper .note-files-wrapper {
   display: flex;
@@ -390,6 +414,10 @@ body a:visited {
 #notes-section .note .note-content-wrapper .note-files-wrapper .note-file-bean .file-bean-text:hover {
   color: #faa356;
 }
+#notes-section .note .note-content-wrapper .content {
+  font-size: 10pt;
+  padding: 4px;
+}
 #notes-section .note .note-control-panel {
   width: 100%;
   height: 0;
@@ -411,7 +439,7 @@ body a:visited {
 }
 #notes-section .note:hover .note-control-panel {
   display: flex !important;
-  height: 30px;
+  height: 32px;
   padding: 8px 0;
 }
 #notes-section .note .child-note {
@@ -430,12 +458,42 @@ body a:visited {
   font-size: 10pt;
 }
 #notes-section .root-note {
-  width: 320px;
-  max-height: 340px;
+  width: 300px;
+  max-height: 300px;
 }
 #notes-section .selected {
   border: solid 1px #54995D;
   border-left: solid 8px #54995D;
+}
+
+.note-tags-wrapper {
+  display: flex;
+}
+.note-tags-wrapper .note-tag-bean {
+  display: flex;
+  border: solid 1px #37373d;
+  border-radius: 16px;
+  background-color: #353535;
+  margin: 4px;
+  margin-left: 0;
+  font-size: 10px;
+  cursor: pointer;
+}
+.note-tags-wrapper .note-tag-bean .tag-bean-hashtag {
+  background-color: #252525;
+  border-radius: 16px 0 0 16px;
+  text-align: center;
+  font-weight: bold;
+  color: #89929b;
+  padding: 2px 4px;
+  padding-left: 6px;
+}
+.note-tags-wrapper .note-tag-bean .tag-bean-text {
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+.note-tags-wrapper .note-tag-bean .tag-bean-text:hover {
+  color: #faa356;
 }
 
 #settings-section {
@@ -461,7 +519,6 @@ body a:visited {
 
 #footer-section {
   padding: 16px;
-  height: 30px;
   text-align: right;
   color: #89929b;
   font-size: 9pt;
@@ -497,6 +554,13 @@ body a:visited {
 .flex-one {
   flex: 1;
   justify-content: center;
+}
+
+.divider {
+  color: #89929b;
+  border-bottom: solid 1px #89929b;
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 
 .clickable {
@@ -674,6 +738,25 @@ body a:visited {
   font-size: 9pt;
   padding-top: 16px;
   padding-bottom: 4px;
+}
+.input-wrapper .input-ribbon {
+  padding-top: 16px;
+  padding-bottom: 4px;
+}
+.input-wrapper .input-ribbon span {
+  font-size: 9pt;
+  padding-top: 16px;
+}
+.input-wrapper .input-ribbon .input-option {
+  color: #89929b;
+}
+.input-wrapper .input-ribbon .input-option:hover {
+  cursor: pointer;
+  color: #faa356;
+}
+.input-wrapper .input-ribbon .ribbon-divider {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .input-wrapper input {
   font-size: 11pt;
@@ -890,6 +973,9 @@ textarea::-webkit-scrollbar-track {
   color: #faa356;
   cursor: pointer;
 }
+.thread-switcher .spacer {
+  flex: 1;
+}
 
 .thread-container {
   padding: 0;
@@ -916,4 +1002,90 @@ pre {
   flex: 1;
   word-wrap: break-word;
   white-space: pre-wrap;
+}
+
+.table {
+  flex: 1;
+  border: solid 1px #37373d;
+  border-radius: 2px;
+  border-spacing: 0;
+}
+.table .selected td {
+  border-top: solid 1px #54995D;
+  border-bottom: solid 1px #54995D;
+}
+.table .selected td:first-child {
+  border-left: solid 8px #54995D !important;
+}
+.table .selected td:last-child {
+  border-right: solid 1px #54995D !important;
+}
+.table .enumerator {
+  text-align: center;
+  color: #89929b;
+}
+.table th {
+  padding: 12px 16px;
+  background-color: #353535;
+}
+.table td {
+  padding: 8px;
+  margin: 4px;
+  border-bottom: solid 1px #37373d;
+  border-top: solid 1px #292929;
+  box-sizing: border-box;
+}
+.table td .note-control-panel {
+  text-align: center;
+  padding: 0;
+  display: flex;
+  height: 28px;
+  justify-content: flex-end;
+  transition: 0.3s ease;
+}
+.table td .note-control-panel .clickable {
+  margin: 2px;
+  font-weight: normal;
+  min-width: 28px;
+  text-align: center;
+}
+.table td .note-control-panel .clickable:hover {
+  color: #faa356;
+  cursor: pointer;
+}
+.table td:nth-child(3) {
+  font-size: 10pt;
+  color: #89929b;
+}
+.table .hoverable {
+  cursor: pointer;
+}
+.table .hoverable:hover {
+  background-color: #3d3d3d;
+}
+.table .hoverable:hover td:first-child {
+  border-left: solid 8px #3d3d3d;
+}
+.table .row-level-1 td:nth-child(2) {
+  padding-left: 24px;
+}
+.table .row-level-2 td:nth-child(2) {
+  padding-left: 48px;
+}
+.table .row-level-3 td:nth-child(2) {
+  padding-left: 72px;
+}
+
+.zebra tr:nth-child(even) {
+  background-color: #252525;
+}
+.zebra tr:nth-child(even) td:first-child {
+  border-left: solid 8px #252525;
+}
+
+.zebra tr:nth-child(odd) {
+  background-color: #292929;
+}
+.zebra tr:nth-child(odd) td:first-child {
+  border-left: solid 8px #292929;
 }

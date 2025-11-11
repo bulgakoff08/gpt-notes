@@ -10,17 +10,31 @@ model.listen("notes", value => {
 	$("notes-section").clear();
 	model.get("notesCache").clear();
 	model.get("relationsCache").clear();
-	let childNotes = [];
 	value.forEach((note, index) => {
 		model.get("notesCache").set(note["uuid"], note);
 		if (note["parentId"]) {
-			childNotes.push(note);
 			if (!model.get("relationsCache").has(note["parentId"])) {
 				model.get("relationsCache").set(note["parentId"], []);
 			}
 			model.get("relationsCache").get(note["parentId"]).push(note["uuid"]);
+		}
+	});
+	
+	if (settings["view"] === "card") {
+		updateCardView(value);
+	}
+	if (settings["view"] === "table") {
+		updateTableView(value);
+	}
+});
+
+function updateCardView (notes) {
+	let childNotes = [];
+	notes.forEach((note, index) => {
+		if (note["parentId"]) {
+			childNotes.push(note);
 		} else {
-			createNoteElement($("notes-section"), note, index);
+			createNoteElement($("notes-section"), notes, note);
 		}
 	});
 	for (let index = 0; index < childNotes.length; index++) {
@@ -28,7 +42,7 @@ model.listen("notes", value => {
 		if (model.get("notesCache").has(note["parentId"])) {
 			const container = $(note["parentId"]);
 			if (container.exist()) {
-				createNoteElement(container, note, index);
+				createNoteElement(container, notes, note);
 			} else {
 				childNotes.push(note);
 			}
@@ -37,8 +51,62 @@ model.listen("notes", value => {
 			model.update("notes");
 		}
 	}
-	childNotes.forEach((note, index, notes) => {});
-});
+}
+
+function updateTableView (notes) {
+	let table = $("notes-section").create("table").style("table zebra");
+	notes.forEach((note, index) => {
+		if (note["parentId"] == null) {
+			createTableRow(table, notes, note, 0);
+		}
+	});
+}
+
+function createTableRow (table, notes, note, level) {
+	let index = findNoteIndex(notes, note);
+	
+	let row = table.create("tr").style("hoverable row-level-" + level).id(note["uuid"]);
+	row.create("td").style("enumerator").text(index + 1)
+
+	let titleCell = row.create("td");
+	titleCell.create("div").text(note["title"]);
+
+	if (note["tags"]) {
+		titleCell.add(createTagsPanel(note));
+	}
+	let text = note["content"].length > 120 ? note["content"].replace(/\n/g, " ").substring(0, 117) + "..." : note["content"];
+	row.create("td").text(text);
+	row.create("td").add(createControlPanel(note, index));
+
+	if (isSelected(note["uuid"])) {
+		row.style("selected");
+	}
+
+	row.onclick(event => {
+		event.stopPropagation();
+		if (isSelected(note["uuid"])) {
+			model.get("selection").delete(note["uuid"]);
+		} else {
+			model.get("selection").set(note["uuid"], note);
+		}
+		model.update("selection");
+	});
+	
+	if (model.get("relationsCache").has(note["uuid"])) {
+		model.get("relationsCache").get(note["uuid"]).forEach(child => {
+			createTableRow(table, notes, model.get("notesCache").get(child), level + 1);
+		});
+	}
+}
+
+function findNoteIndex (notes, note) {
+	for (let counter = 0; counter < notes.length; counter++) {
+		if (notes[counter] === note) {
+			return counter;
+		}
+	}
+	return 0;
+}
 
 function openAttachment (file) {
 	let components = [];
@@ -52,83 +120,17 @@ function openAttachment (file) {
 		components.push(pre);
 	}
 	new Popup("File " + file["name"], "800px", "600px", ...components);
-	
-	/* if (file["type"].startsWith("image/")) {
-		let image = new Image();
-		image.src = file["content"];
-		let newTab = window.open("", "_blank");
-		newTab.document.body.appendChild(image);
-	} else {
-		let blob = new Blob([file["content"]], {type: file["type"]});
-		const url = URL.createObjectURL(blob);
-		window.open(url, "_blank");
-	} */
 }
 
-function createNoteElement (container, note, index) {
+function createNoteElement (container, notes, note) {
 	let noteContainer = container.create("div").style("note").id(note["uuid"]);
+	let index = findNoteIndex(notes, note);
 	noteContainer.style(note["parentId"] ? "child-note" : "root-note");
 	if (isSelected(note["uuid"])) {
 		noteContainer.style("selected");
 	}
-	let controlPanel = noteContainer.create("div").style("note-control-panel");
-	if (!note["parentId"]) {
-		controlPanel.create("div").style("clickable").text("⮝").onclick(event => {
-			event.stopPropagation();
-			const index = model.get("notes").findIndex(n => n.uuid === note.uuid);
-			if (index > 0) {
-				const temp = model.get("notes")[index];
-				model.get("notes")[index] = model.get("notes")[index - 1];
-				model.get("notes")[index - 1] = temp;
-				model.update("notes");
-			}
-		});
-		controlPanel.create("div").style("clickable").text("⮟").onclick(event => {
-			event.stopPropagation();
-			const index = model.get("notes").findIndex(n => n.uuid === note.uuid);
-			if (index < model.get("notes").length - 1) {
-				const temp = model.get("notes")[index];
-				model.get("notes")[index] = model.get("notes")[index + 1];
-				model.get("notes")[index + 1] = temp;
-				model.update("notes");
-			}
-		});
-	}
-	controlPanel.create("div").style("clickable").text("EDIT").onclick(event => {
-		event.stopPropagation();
-		loadIntoEditor(note);
-	});
-	controlPanel.create("div").style("clickable").text("COPY").onclick(event => {
-		event.stopPropagation();
-		let uuid = createUuid();
-		let copy = JSON.parse(JSON.stringify(note));
-		copy["uuid"] = uuid;
-		copy["title"] += " (copy)";
-		model.get("notes").unshift(copy);
-		model.update("notes");
-	});
-	let deleteButton = controlPanel.create("div").style("clickable").text("DELETE");
-	deleteButton.onclick(event => {
-		event.stopPropagation();
-		deleteButton.destroy();
-		controlPanel.create("div").style("clickable").text("REALLY?").onclick(event => {
-			event.stopPropagation();
-			model.get("notes").splice(index, 1);
-			if (isSelected(note["uuid"])) {
-				model.get("selection").delete(note["uuid"])
-				model.update("selection");
-			}
-			model.update("notes");
-			toast("Removed");
-		});
-	});
-	if (note["parentId"]) {
-		controlPanel.create("div").style("clickable").text("EXTRACT").onclick(event => {
-			event.stopPropagation();
-			delete note["parentId"]
-			model.update("notes");
-		});
-	}
+	
+	noteContainer.add(createControlPanel(note, index));
 	noteContainer.onclick(event => {
 		event.stopPropagation();
 		if (isSelected(note["uuid"])) {
@@ -138,22 +140,16 @@ function createNoteElement (container, note, index) {
 		}
 		model.update("selection");
 	});
+	
 	let contentWrapper = noteContainer.create("div").style("note-content-wrapper");
 	let title = contentWrapper.create("div").style("title").id(note["uuid"] + "-title");
 	title.create("div").style("order-number").text(index + 1);
 	title.create("span").text(note["title"]);
+	
 	if (note["tags"]) {
-		let tagsContainer = contentWrapper.create("div").style("note-tags-wrapper");
-		note["tags"].forEach(tagText => {
-			let tag = tagsContainer.create("div").style("note-tag-bean");
-			tag.create("div").style("tag-bean-hashtag").text("#");
-			tag.create("div").style("tag-bean-text").text(tagText);
-			tag.onclick(event => {
-				event.stopPropagation();
-				model.set("searchTag", tagText);
-			});
-		});
+		contentWrapper.add(createTagsPanel(note));
 	}
+	
 	if (note["files"]) {
 		let filesContainer = contentWrapper.create("div").style("note-files-wrapper");
 		note["files"].forEach(file => {
@@ -167,6 +163,83 @@ function createNoteElement (container, note, index) {
 		});
 	}
 	contentWrapper.create("div").style("content").id(note["uuid"] + "-content").html(markdownToHtml(note["content"]));
+}
+
+function createControlPanel (note, index) {
+	let controlPanel = $().create("div").style("note-control-panel");
+	if (!note["parentId"]) {
+		controlPanel.create("div").style("clickable").tooltip("Move this note up").text("⮝").onclick(event => {
+			event.stopPropagation();
+			const index = model.get("notes").findIndex(n => n.uuid === note.uuid);
+			if (index > 0) {				
+				const temp = model.get("notes")[index];
+				model.get("notes")[index] = model.get("notes")[index - 1];
+				model.get("notes")[index - 1] = temp;
+				model.update("notes");
+			}
+		});
+		controlPanel.create("div").style("clickable").tooltip("Move this note down").text("⮟").onclick(event => {
+			event.stopPropagation();
+			const index = model.get("notes").findIndex(n => n.uuid === note.uuid);
+			if (index < model.get("notes").length - 1) {
+				const temp = model.get("notes")[index];
+				model.get("notes")[index] = model.get("notes")[index + 1];
+				model.get("notes")[index + 1] = temp;
+				model.update("notes");
+			}
+		});
+	}
+	controlPanel.create("div").style("clickable").tooltip("Edit note").text("✎").onclick(event => {
+		event.stopPropagation();
+		loadIntoEditor(note);
+	});
+	controlPanel.create("div").style("clickable").tooltip("Duplicate this note").text("▚").onclick(event => {
+		event.stopPropagation();
+		let uuid = createUuid();
+		let copy = JSON.parse(JSON.stringify(note));
+		copy["uuid"] = uuid;
+		copy["title"] += " (copy)";
+		model.get("notes").unshift(copy);
+		model.update("notes");
+	});
+	let deleteButton = controlPanel.create("div").style("clickable").tooltip("Delete this note").text("⛌");
+	deleteButton.onclick(event => {
+		event.stopPropagation();
+		deleteButton.destroy();
+		controlPanel.create("div").style("clickable").tooltip("Confirm note removal").text("✓").onclick(event => {
+			event.stopPropagation();
+			model.get("notes").splice(index, 1);
+			if (isSelected(note["uuid"])) {
+				model.get("selection").delete(note["uuid"])
+				model.update("selection");
+			}
+			model.update("notes");
+			toast("Removed");
+		});
+	});
+	if (note["parentId"]) {
+		controlPanel.create("div").style("clickable").tooltip("Exctract this note from parent").text("↪").onclick(event => {
+			event.stopPropagation();
+			delete note["parentId"]
+			model.update("notes");
+		});
+	}
+	return controlPanel.get();
+}
+
+function createTagsPanel (note) {
+	let tagsContainer = $().create("div").style("note-tags-wrapper");
+	note["tags"].forEach(tagText => {
+		let tag = tagsContainer.create("div").style("note-tag-bean");
+		tag.create("div").style("tag-bean-hashtag").text("#");
+		tag.create("div").style("tag-bean-text").text(tagText);
+		tag.onclick(event => {
+			event.stopPropagation();
+			model.set("searchTag", tagText);
+			toast("Selected all notes with tag: " + tagText);
+		});
+	});
+	return tagsContainer.get();
 }
 
 function saveEditedNote () {
@@ -193,6 +266,8 @@ function getExtensionByType (type) {
 	switch (type) {
 		case "text/plain":
 			return ".txt";
+		case "text/csv":
+			return ".csv";
 		case "application/json":
 			return ".json";
 		case "image/png":
@@ -211,25 +286,50 @@ function loadEditorFiles (note) {
 		let container = $("editor-files").create("div").style("editor-file-wrapper");
 		container.create("img").width("24px").height("24px").attribute("src", "images/extension" + getExtensionByType(file["type"]) + ".svg");
 		container.create("span").text(file["name"]);
-		container.onclick(event => {
-			note["files"].splice(note["files"].indexOf(note), 1);
-			if (note["files"].length == 0) {
-				delete note["files"];
+		container.create("div").style("flex-one");
+		let buttons = container.create("div").style("list-item-actions");
+		
+		buttons.create("div").tooltip("Rename attachment").text("✎").onclick(event => {
+			event.stopPropagation();
+			let name = prompt("Please enter new name for this file", file["name"]);
+			if (name !== null) {
+				if (name.trim() === "") {
+					name = "unnamed";
+				}
+				file["name"] = name;
+				loadEditorFiles(note);
 			}
-			loadEditorFiles(note);
+		});
+		
+		let removeButton = buttons.create("div").tooltip("Delete this attachment").text("⛌");
+		removeButton.onclick(event => {
+			event.stopPropagation();
+			removeButton.destroy();
+			buttons.create("div").tooltip("Confirm attachment removal").text("✓").onclick(event => {
+				event.stopPropagation();
+				note["files"].splice(note["files"].indexOf(note), 1);
+				if (note["files"].length == 0) {
+					delete note["files"];
+				}
+				loadEditorFiles(note);
+			});
+		});
+		container.onclick(event => {
+			openAttachment(file);
 		});
 	});
 }
 
 function loadIntoEditor (note) {
 	model.set("editUuid", note["uuid"]);
-	model.set("chatVisible", false);
+	//model.set("chatVisible", false);
 	model.set("editorVisible", true);
 	$("editor-title-input").get().value = note["title"];
 	$("editor-tags-input").get().value = note["tags"] ? note["tags"].join(", ") : "";
 	loadEditorFiles(note);
 	$("editor-content-input").get().value = note["content"];
 	$("editor-file-input").onchange(event => {
+		console.log(event);
 		let file = event.target.files[0];
 		let reader = new FileReader();
 		reader.onload = function(e) {
@@ -237,15 +337,17 @@ function loadIntoEditor (note) {
 				note["files"] = [];
 			}
 			note["files"].push({
-				name: generateUuidPart("xxxxxx") + getExtensionByType(file.type),
+				name: file.name,
 				type: file.type,
 				content: e.target.result
 			});
 			loadEditorFiles(note);
+			$("editor-file-input").get().value = null;
 		};
 		switch (file.type) {
 			case "text/plain":
 			case "application/json":
+			case "text/csv":
 				reader.readAsText(file);
 				break;
 			case "image/png":
@@ -253,6 +355,8 @@ function loadIntoEditor (note) {
 			case "image/bmp":
 				reader.readAsDataURL(file);
 				break;
+			default:
+				toast("Unsupported type: " + file.type);
 		}
 	});
 }

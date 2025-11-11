@@ -13,10 +13,25 @@ function Accordion (title, ...children) {
 	return wrapper.get();
 }
 
-function Input (title, value, placeholder, handler) {
+function Input (title, value, placeholder, handler, options) {
 	let wrapper = $().create("div").style("input-wrapper");
-	wrapper.create("span").text(title);
-	let input = wrapper.create("input");
+	let input = $().create("input");
+	if (options) {
+		let ribbon = wrapper.create("div").style("input-ribbon");
+		ribbon.create("span").text(title + ": ");
+		for (let i = 0; i < options.length; i++) {
+			let span = ribbon.create("span").text(options[i]).style("input-option").onclick(event => {
+				input.get().value = options[i];
+				handler(input.get().value);
+			});
+			if (i < options.length - 1) {
+				ribbon.create("span").text("/").style("ribbon-divider");
+			}
+		}
+	} else {
+		wrapper.create("span").text(title);
+	}
+	wrapper.add(input.get());
 	input.attribute("placeholder", placeholder);
 	input.get().value = value;
 	input.onchange(event => handler(input.get().value));

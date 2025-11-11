@@ -22,6 +22,7 @@
 					</svg>
 					New Chat
 				</div>
+				<div id="archive-items"></div>
 			</div>
 			<div id="content-section">
 				<div id="header-section">
@@ -33,6 +34,14 @@
 					<div id="deselect-button" class="clickable header-button">
 						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed"><path d="M768-141 615-294H294v-321L90-819l51-51 678 678-51 51ZM366-366h177L366-543v177Zm300-81-72-72v-75h-75l-72-72h219v219ZM216-216v72q-29.7 0-50.85-21.15Q144-186.3 144-216h72Zm-72-78v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72h72v72h-72Zm150 450v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 600v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 600v-72h72v72h-72Zm0-600v-72h72v72h-72Zm150 450v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72h72v72h-72Zm0-150v-72q29.7 0 50.85 21.15Q816-773.7 816-744h-72Z"/></svg>
 						Deselect
+					</div>
+					<div id="chat-visibility-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M240-384h336v-72H240v72Zm0-132h480v-72H240v72Zm0-132h480v-72H240v72ZM96-96v-696q0-29.7 21.15-50.85Q138.3-864 168-864h624q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H240L96-96Zm114-216h582v-480H168v522l42-42Zm-42 0v-480 480Z"/></svg>
+						Dialog
+					</div>
+					<div id="change-view-button" class="clickable header-button">
+						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M288-144 96-336l192-192 51 51-105 105h582v72H234l105 105-51 51Zm384-288-51-51 105-105H144v-72h582L621-765l51-51 192 192-192 192Z"/></svg>
+						Display
 					</div>
 					<div id="new-note-button" class="clickable header-button">
 						<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e8eaed">
@@ -54,7 +63,7 @@
 						<div id="input-section">
 							<div id="input-text-section">
 								<div class="input-wrapper flex-one">
-									<input id="chat-input" type="text" placeholder="Enter your chat message..."/>
+									<input id="chat-input" type="text" placeholder="Type your message..."/>
 								</div>
 							</div>
 							<div id="input-actions-section">
@@ -70,7 +79,7 @@
 					<div id="editor-section">
 						<div class="input-wrapper">
 							<span>Note Title</span>
-							<input id="editor-title-input" placeholder="Enter a title...">
+							<input id="editor-title-input" placeholder="Note title...">
 						</div>
 						<div class="input-wrapper">
 							<span>Note Tags</span>
@@ -79,7 +88,7 @@
 						<div id="editor-files"></div>
 						<div class="textarea-wrapper flex-one">
 							<span>Note Content</span>
-							<textarea id="editor-content-input" placeholder="Enter a content..." rows="1"></textarea>
+							<textarea id="editor-content-input" placeholder="Note content..." rows="1"></textarea>
 						</div>
 						<div id="editor-actions-section">
 							<div id="editor-attach-file" class="clickable-light" style="width: 100px;">
@@ -124,13 +133,15 @@
 			visibility(model, "settings-section", "settingsVisible", false);
 			visibility(model, "merge-notes-button", "mergeVisible", false);
 			visibility(model, "deselect-button", "deselectVisible", false);
-			visibility(model, "chat-section", "chatVisible", true);
+			visibility(model, "chat-section", "chatVisible", model.get("chatVisible"));
 			
 			model.listen("selection", value => {
 				model.set("deselectVisible", value.size > 0);
 			});
 			
 			$("settings-button").onclick(event => toggle(model, "settingsVisible"));
+			
+			$("chat-visibility-button").onclick(event => toggle(model, "chatVisible"));
 			
 			$("merge-notes-button").onclick(event => {
 				let parent = model.get("parent");
@@ -149,20 +160,25 @@
 			
 			$("new-note-button").onclick(event => {
 				saveEditedNote();
-				let uuid = createUuid()
-				model.get("notes").unshift({uuid: uuid, tags: [], title: "", content: ""});
+				let uuid = createUuid();
+				let note = {uuid: uuid, tags: [], title: "", content: ""};
+				model.get("notes").unshift(note);
 				model.set("editUuid", uuid);
 				model.update("notes");
-				$("editor-title-input").get().value = "";
-				$("editor-tags-input").get().value = "";
-				$("editor-content-input").get().value = "";
-				model.set("chatVisible", false);
-				model.set("editorVisible", true);
+				loadIntoEditor(note);
+			});
+			
+			$("change-view-button").onclick(event => {
+				let view = settings["view"] === "card" ? "table" : "card";
+				settings["view"] = view;
+				saveSettings();
+				model.update("notes");
+				toast("View type changed to " + view);
 			});
 			
 			$("editor-cancel-button").onclick(event => {
 				model.set("editorVisible", false);
-				model.set("chatVisible", true);
+				//model.set("chatVisible", true);
 				model.remove("editUuid");
 				$("editor-title-input").get().value = "";
 				$("editor-tags-input").get().value = "";
@@ -175,7 +191,7 @@
 				$("editor-tags-input").get().value = "";
 				$("editor-content-input").get().value = "";
 				model.set("editorVisible", false);
-				model.set("chatVisible", true);
+				//model.set("chatVisible", true);
 			});
 		</script>
 	</body>
