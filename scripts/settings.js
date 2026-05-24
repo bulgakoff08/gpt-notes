@@ -1,25 +1,21 @@
 const modelsList = [
 	["---", "openrouter.ai"],
-	["gryphe/mythomax-l2-13b", "Llama 2 Mythomax 13B"],
 	["meta-llama/llama-3-70b-instruct", "Llama 3 70B"],
 	["meta-llama/llama-3.1-405b-instruct", "Llama 3.1 405B"],
 	["meta-llama/llama-3.2-90b-vision-instruct", "Llama 3.2 90B"],
 	["meta-llama/llama-3.3-70b-instruct", "Llama 3.3 70B"],
-	["meta-llama/llama-4-maverick", "Llama 4 Maverick"],
-	["mistralai/mistral-nemo", "Mistralai Nemo"],
-	["microsoft/wizardlm-2-8x22b", "Wizard LM2 22B"],
+	["mistralai/mistral-nemo", "MistralAI Nemo"],
 	["deepseek/deepseek-chat-v3-0324", "Deepseek Chat V3"],
-	["---", "Open AI"],
-	["openai/gpt-4o", "GTP4 Omni"],
-	["openai/gpt-5", "GTP5"],
-	["openai/gpt-5-chat", "GPT5 Chat"],
-	["openai/gpt-5-mini", "GTP5 Mini"],
-	["openai/gpt-5-nano", "GTP5 Nano"],
+	["google/gemma-4-31b-it", "Gemma 4 31B"],
+	["x-ai/grok-4.20-beta", "Grok 4.20"],
 	["---", "Mistral AI"],
 	["mistral-large-latest", "Mistral Large"],
 	["---", "Local LLM Studio"],
 	["llama3.2-8b-stheno", "Llama 3.2 Stheno 8B"],
-	["gemmasutra-9b", "Gemma 2 Gemmasutra 9B"]
+	["gemmasutra-9b", "Gemma 2 Gemmasutra 9B"],
+	["meta-llama-3-8b-instruct", "Llama 3 8B"],
+	["google/gemma-3-4b", "Gemma 3 4B"],
+	["google/gemma-4-e4b", "Gemma 4 4B"]
 ];
 
 const editPromptTemplate = "Rewrite your latest message precisely following user guidance. Latest last message is going to be replaced with whatever you create now. Do not mention the fact of editing at all. User instructions:";
@@ -67,6 +63,10 @@ if (!settings["editPrompt"]) {
 
 if (settings["chatVisible"] == null) {
 	settings["chatVisible"] = true;
+}
+
+if (settings["chatGroups"] == null) {
+	settings["chatGroups"] = [];
 }
 
 settings["models"] = modelsList;
@@ -176,7 +176,7 @@ function reloadModels () {
 		$(modelsAccordion).destroy();
 	}
 	let modelButtons = [
-		/* $().create("div").style("clickable-light center bnorder").text("+ Add New").onclick(event => {
+		/* $().create("div").style("clickable-light center border").text("+ Add New").onclick(event => {
 			model.set("addModelVisible", !Boolean(model.get("addModelVisible")));
 			toast("addModelVisible: " + model.get("addModelVisible"));
 		}).get() */

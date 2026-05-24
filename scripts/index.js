@@ -13,6 +13,28 @@ function Accordion (title, ...children) {
 	return wrapper.get();
 }
 
+function HandledAccordion (title, opened, handler, ...children) {
+    let wrapper = $().create("div").style("accordion-wrapper");
+	let header = wrapper.create("div").style("accordion-header").add(title);
+	let content = wrapper.create("div").style("accordion-content");
+	let state = opened;
+	if (opened) {
+	    header.toggle("accordion-header-active");
+        content.toggle("accordion-content-active");
+	}
+	let contentWrapper = content.create("div").style("accordion-content-wrapper");
+	children.forEach(child => {
+		contentWrapper.add(child);
+	});
+	header.onclick(event => {
+		header.toggle("accordion-header-active");
+		content.toggle("accordion-content-active");
+		state = !state;
+		handler(state);
+	});
+	return wrapper.get();
+}
+
 function Input (title, value, placeholder, handler, options) {
 	let wrapper = $().create("div").style("input-wrapper");
 	let input = $().create("input");

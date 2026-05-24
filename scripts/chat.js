@@ -7,6 +7,18 @@ $("new-chat-button").onclick(event => {
 	model.set("chats", settings["chats"]);
 });
 
+$("new-group-button").onclick(event => {
+	let groupName = prompt("Enter new chats group name", "New group");
+	if (groupName) {
+		settings["chatGroups"].push({
+			"uid": createUuid(),
+			"title": groupName
+		});
+		saveSettings();
+		model.update("chats");
+	}
+});
+
 function sendMessage () {
 	let userInput = $("chat-input").get().value;
 	if (userInput) {
@@ -45,6 +57,22 @@ function sendMessage () {
 	}
 }
 
+function initConversation () {
+	let userInput = "((OOC: Initialize conversation by creating a first message according to your context, first message example or any situation that could happen in current world setup. Use provided materials like character card, response instructions or simply make a made up fantasy if none of above is applicable))";
+	if (userInput) {
+		let message = {role: "user", time: formatDate(), content: userInput};
+		let messages = model.get("activeThread");
+        saveSettings();
+		model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
+		$("chat").get().scrollTop = $("chat").get().scrollHeight;
+		model.get("activeChatHandler")();
+		model.remove("savedResponse");
+		sendRequest(sendMessageHandler);
+	} else {
+		toast("Input is empty");
+	}
+}
+
 $("chat-send-button").onclick(event => sendMessage());
 
 $("chat-input").get().onkeypress= event => {
@@ -72,19 +100,31 @@ model.listen("selection", list => {
 model.listen("chats", list => {
 	$("history-items").clear();
 	$("archive-items").clear();
+	$("group-items").clear();
+	model.set("chatsCreated", []);
+
 	const archivePanel = $().create("div");
 	model.set("archive", archivePanel);
 	let archiveCount = 0;
-	
+
+	initChatGroups($("group-items"), settings["chatGroups"]);
+
 	list.forEach((chat, index, chats) => {
 		if (chat["archived"]) {
 			archiveCount++;
 			createChatEntry(archivePanel, chat, index, chats);
+		} else if (chat["group"]) {
+			if (model.has(chat["group"])) {
+				createChatEntry(model.get(chat["group"]), chat, index, chats);
+			} else {
+				delete chat["group"];
+				createChatEntry($("history-items"), chat, index, chats);
+			}
 		} else {
 			createChatEntry($("history-items"), chat, index, chats);
 		}
 	});
-	
+
 	if (archiveCount > 0) {
 		let archiveHeader = $().create("div").style("horizontal");
 		archiveHeader.create("span").style("archive-counter").text(archiveCount);
@@ -93,17 +133,50 @@ model.listen("chats", list => {
 	}
 });
 
+function initChatGroups (container, groups) {
+	groups.forEach((group, index) => {
+		let groupHeader = $().create("div").style("horizontal");
+		groupHeader.create("span").style("group-title").text(group["title"]);
+		groupHeader.create("span").style("group-clickable").tooltip("Move active chat to this group").text("⤵").onclick(event => {
+			event.stopPropagation();
+			if (model.has("activeChat")) {
+				model.get("activeChat")["group"] = group["uid"];
+				toast("Chat moved to " + group["title"]);
+				saveSettings();
+				model.update("chats");
+			}
+		});
+		groupHeader.create("span").style("group-clickable").tooltip("Move active chat to this group").text("⛌").onclick(event => {
+			event.stopPropagation();
+			if (confirm("Are you sure you want to remove group " + group["title"] + "?")) {
+				model.remove(group["uid"]);
+				groups.splice(index, 1);
+				toast("Group removed, all chats are placed into general list");
+				saveSettings();
+				model.update("chats");
+			}
+		});
+		let groupPanel = $().create("div");
+		model.set(group["uid"], groupPanel);
+		let handler = state => {
+		    group["opened"] = state;
+		    saveSettings();
+		}
+		container.add(HandledAccordion(groupHeader.get(), (group["opened"] || false), handler, groupPanel.get()));
+	});
+}
+
 function createChatEntry (container, chat, index, chats) {
 	let entry = container.create("div").style("chat-history-entry");
+	model.get("chatsCreated").push(entry);
 	let nameSpan = entry.create("span").style("chat-history-title flex-one").text(chat["title"]);
 	let countSpan = entry.create("span").style("chat-history-messages").html(chat["messages"].length + " MSG");
 	let handler = event => {
 		let activeChat = model.get("activeChat");
-		
+		model.get("chatsCreated").forEach(header => header.unstyle("selected"));
 		if (activeChat === chat) {
 			model.remove("activeChat");
 			model.remove("activeThread");
-			entry.unstyle("selected");
 			setSelection([]);
 		} else {
 			model.set("activeChat", chat);
@@ -112,11 +185,8 @@ function createChatEntry (container, chat, index, chats) {
 			model.set("activeChatHandler", () => {
 				countSpan.html(chat["messages"].length + " MSG");
 			});
-			$("history-items").forEach(section => section.unstyle("selected"));
-			model.get("archive").forEach(section => section.unstyle("selected"));
 			entry.style("selected");
 		}
-		
 	};
 	nameSpan.onclick(handler);
 	countSpan.onclick(handler);
@@ -148,6 +218,13 @@ function createChatEntry (container, chat, index, chats) {
 			toast("Chat restored from archive");
 			model.update("chats");
 		});
+	} else if (chat["group"]) {
+		buttons.create("div").tooltip("Restore from archive").text("⤴").onclick(event => {
+			delete chat["group"];
+			saveSettings();
+			toast("Chat moved to general list");
+			model.update("chats");
+		});
 	} else {
 		buttons.create("div").tooltip("Archive chat").text("⤵").onclick(event => {
 			chat["archived"] = true;
@@ -156,7 +233,7 @@ function createChatEntry (container, chat, index, chats) {
 			model.update("chats");
 		});
 	}
-	
+
 	let removeButon = buttons.create("div").tooltip("Delete chat").text("⛌");
 	removeButon.onclick(event => {
 		event.stopPropagation();
@@ -187,6 +264,7 @@ model.listen("activeChat", chat => {
 		setSelection(chat["notes"]);
 		printMessages($("chat"), chat["messages"]);
 		model.set("chatVisible", true);
+		model.set("initVisible", chat["messages"].length == 0)
 	} else {
 		model.remove("activeChatHandler");
 		model.remove("activeChatItem");
@@ -246,7 +324,7 @@ function createUserMessage (container, index, message, messages) {
 		content.clear();
 		let textArea = content.create("textarea").text(message["content"]);
 		textArea.height(textArea.get().scrollHeight + "px");
-		textArea.onchange(even => {
+		textArea.onchange(event => {
 			message["content"] = textArea.get().value;
 			textArea.destroy();
 			content.html(markdownToHtml(message["content"]));
@@ -307,7 +385,7 @@ function createAssistantMessage (container, index, message, messages) {
 	let body = container.create("div").style("message assistant-message");
 	let icon = getIconForMessage();
 	if (icon) {
-		body.create("div").style("message-icon").create("img").attribute("src", icon).width("100px");
+		body.create("div").style("message-icon").create("img").attribute("src", icon).width("120px");
 	}
 	let messageSection = body.create("div").style("message-section");
 	let header = messageSection.create("div").style("message-header");
@@ -383,6 +461,15 @@ function createAssistantMessage (container, index, message, messages) {
 			});
 		}
 	});
+	let deleteButton = header.create("span").style("message-action").text("DELETE");
+    deleteButton.onclick(event => {
+        deleteButton.text("REALLY?").get().onclick = event => {
+            messages.splice(index);
+            model.update("activeChat");
+            model.get("activeChatHandler")();
+            saveSettings();
+        };
+    });
 }
 
 function createThreadSwitcher (container, index, message, messages) {

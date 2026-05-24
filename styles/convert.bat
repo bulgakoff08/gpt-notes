@@ -1,1 +1,0 @@
-sass D:\Development\gpt-notes\styles\index.scss D:\Development\gpt-notes\styles\index.processed.css

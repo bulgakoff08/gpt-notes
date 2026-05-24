@@ -1,7 +1,8 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700");
 body {
-  background-color: #191919;
+  /* background-color: #191919; */
+  background-color: #0C0C0C;
   color: #fafafa;
   font-family: Montserrat;
   font-size: 11pt;
@@ -33,10 +34,8 @@ body a:visited {
   padding-right: 16px;
   box-sizing: border-box;
   border-right: solid 1px #252525;
-  max-height: calc(100vh);
+  max-height: 100vh;
   overflow-y: scroll;
-  background-color: #060606;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='450' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='.1'%3E%3Cpolygon fill='%23444' points='90 150 0 300 180 300'/%3E%3Cpolygon points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23AAA' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23DDD' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23999' points='450 150 540 0 360 0'/%3E%3Cpolygon points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23DDD' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23444' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23DDD' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23444' points='990 150 1080 0 900 0'/%3E%3Cpolygon fill='%23DDD' points='90 450 0 600 180 600'/%3E%3Cpolygon points='90 450 180 300 0 300'/%3E%3Cpolygon fill='%23666' points='270 450 180 600 360 600'/%3E%3Cpolygon fill='%23AAA' points='270 450 360 300 180 300'/%3E%3Cpolygon fill='%23DDD' points='450 450 360 600 540 600'/%3E%3Cpolygon fill='%23999' points='450 450 540 300 360 300'/%3E%3Cpolygon fill='%23999' points='630 450 540 600 720 600'/%3E%3Cpolygon fill='%23FFF' points='630 450 720 300 540 300'/%3E%3Cpolygon points='810 450 720 600 900 600'/%3E%3Cpolygon fill='%23DDD' points='810 450 900 300 720 300'/%3E%3Cpolygon fill='%23AAA' points='990 450 900 600 1080 600'/%3E%3Cpolygon fill='%23444' points='990 450 1080 300 900 300'/%3E%3Cpolygon fill='%23222' points='90 750 0 900 180 900'/%3E%3Cpolygon points='270 750 180 900 360 900'/%3E%3Cpolygon fill='%23DDD' points='270 750 360 600 180 600'/%3E%3Cpolygon points='450 750 540 600 360 600'/%3E%3Cpolygon points='630 750 540 900 720 900'/%3E%3Cpolygon fill='%23444' points='630 750 720 600 540 600'/%3E%3Cpolygon fill='%23AAA' points='810 750 720 900 900 900'/%3E%3Cpolygon fill='%23666' points='810 750 900 600 720 600'/%3E%3Cpolygon fill='%23999' points='990 750 900 900 1080 900'/%3E%3Cpolygon fill='%23999' points='180 0 90 150 270 150'/%3E%3Cpolygon fill='%23444' points='360 0 270 150 450 150'/%3E%3Cpolygon fill='%23FFF' points='540 0 450 150 630 150'/%3E%3Cpolygon points='900 0 810 150 990 150'/%3E%3Cpolygon fill='%23222' points='0 300 -90 450 90 450'/%3E%3Cpolygon fill='%23FFF' points='0 300 90 150 -90 150'/%3E%3Cpolygon fill='%23FFF' points='180 300 90 450 270 450'/%3E%3Cpolygon fill='%23666' points='180 300 270 150 90 150'/%3E%3Cpolygon fill='%23222' points='360 300 270 450 450 450'/%3E%3Cpolygon fill='%23FFF' points='360 300 450 150 270 150'/%3E%3Cpolygon fill='%23444' points='540 300 450 450 630 450'/%3E%3Cpolygon fill='%23222' points='540 300 630 150 450 150'/%3E%3Cpolygon fill='%23AAA' points='720 300 630 450 810 450'/%3E%3Cpolygon fill='%23666' points='720 300 810 150 630 150'/%3E%3Cpolygon fill='%23FFF' points='900 300 810 450 990 450'/%3E%3Cpolygon fill='%23999' points='900 300 990 150 810 150'/%3E%3Cpolygon points='0 600 -90 750 90 750'/%3E%3Cpolygon fill='%23666' points='0 600 90 450 -90 450'/%3E%3Cpolygon fill='%23AAA' points='180 600 90 750 270 750'/%3E%3Cpolygon fill='%23444' points='180 600 270 450 90 450'/%3E%3Cpolygon fill='%23444' points='360 600 270 750 450 750'/%3E%3Cpolygon fill='%23999' points='360 600 450 450 270 450'/%3E%3Cpolygon fill='%23666' points='540 600 630 450 450 450'/%3E%3Cpolygon fill='%23222' points='720 600 630 750 810 750'/%3E%3Cpolygon fill='%23FFF' points='900 600 810 750 990 750'/%3E%3Cpolygon fill='%23222' points='900 600 990 450 810 450'/%3E%3Cpolygon fill='%23DDD' points='0 900 90 750 -90 750'/%3E%3Cpolygon fill='%23444' points='180 900 270 750 90 750'/%3E%3Cpolygon fill='%23FFF' points='360 900 450 750 270 750'/%3E%3Cpolygon fill='%23AAA' points='540 900 630 750 450 750'/%3E%3Cpolygon fill='%23FFF' points='720 900 810 750 630 750'/%3E%3Cpolygon fill='%23222' points='900 900 990 750 810 750'/%3E%3Cpolygon fill='%23222' points='1080 300 990 450 1170 450'/%3E%3Cpolygon fill='%23FFF' points='1080 300 1170 150 990 150'/%3E%3Cpolygon points='1080 600 990 750 1170 750'/%3E%3Cpolygon fill='%23666' points='1080 600 1170 450 990 450'/%3E%3Cpolygon fill='%23DDD' points='1080 900 1170 750 990 750'/%3E%3C/g%3E%3C/svg%3E");
 }
 #history-section::-webkit-scrollbar {
   width: 10px;
@@ -46,6 +45,10 @@ body a:visited {
 }
 #history-section::-webkit-scrollbar-track {
   background-color: #292929;
+}
+#history-section {
+  background-color: #060606;
+  background-image: url("../images/background.svg");
 }
 #history-section #app-logo {
   display: flex;
@@ -146,7 +149,6 @@ body a:visited {
   color: #89929b;
   font-size: 9pt;
   font-weight: bold;
-  margin-right: 8px;
 }
 #history-section #group-items .group-clickable {
   color: #89929b;
@@ -708,7 +710,8 @@ body a:visited {
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
-  background-color: #252525;
+  /* background-color: #252525; */
+  background-color: #1b1b1b;
 }
 .accordion-wrapper .accordion-header {
   display: flex;
@@ -723,17 +726,17 @@ body a:visited {
   flex: 1;
 }
 .accordion-wrapper .accordion-header-character:before {
-  content: "▽";
+  content: "▼";
   padding-right: 8px;
   float: right;
 }
 .accordion-wrapper .accordion-header-gear:before {
-  content: "▼";
+  content: "▽";
   padding-right: 8px;
   float: right;
 }
 .accordion-wrapper .accordion-header-wrench:before {
-  content: "▼";
+  content: "▽";
   padding-right: 8px;
   float: right;
 }
@@ -742,7 +745,7 @@ body a:visited {
   cursor: pointer;
 }
 .accordion-wrapper .accordion-header:after {
-  content: "▼";
+  content: "▽";
   float: right;
 }
 .accordion-wrapper .accordion-header-active {
@@ -750,7 +753,7 @@ body a:visited {
   border-bottom: none;
 }
 .accordion-wrapper .accordion-header-active:after {
-  content: "▽";
+  content: "▼";
   float: right;
 }
 .accordion-wrapper .accordion-content {
@@ -1123,3 +1126,5 @@ pre {
 .zebra tr:nth-child(odd) td:first-child {
   border-left: solid 8px #292929;
 }
+
+/*# sourceMappingURL=index.compiled.css.map */

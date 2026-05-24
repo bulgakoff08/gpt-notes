@@ -39,7 +39,7 @@ function sendRequest (handler) {
 	
 	countdown();
 
-	const localEndpoint = "http://localhost:1234/v1/chat/completions";
+	const localEndpoint = "http://127.0.0.1:1234/v1/chat/completions";
 	const openrouterEndpoint = "https://openrouter.ai/api/v1/chat/completions";
 	const mistralEndpoint = "https://api.mistral.ai/v1/chat/completions";
 	const headers = (settings["format"] === "local" ? {
@@ -48,7 +48,6 @@ function sendRequest (handler) {
 		"Content-Type": "application/json",
 		"Authorization": "Bearer " + settings["apiKey"],
 		"Accept": "application/json"
-		//"HTTP-Referer": "https://codepen.website"
 	});
 
 	if (settings["format"] === "echo") {
