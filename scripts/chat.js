@@ -58,19 +58,16 @@ function sendMessage () {
 }
 
 function initConversation () {
-	let userInput = "((OOC: Initialize conversation by creating a first message according to your context, first message example or any situation that could happen in current world setup. Use provided materials like character card, response instructions or simply make a made up fantasy if none of above is applicable))";
-	if (userInput) {
-		let message = {role: "user", time: formatDate(), content: userInput};
-		let messages = model.get("activeThread");
-        saveSettings();
-		model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
-		$("chat").get().scrollTop = $("chat").get().scrollHeight;
-		model.get("activeChatHandler")();
-		model.remove("savedResponse");
-		sendRequest(sendMessageHandler);
-	} else {
-		toast("Input is empty");
-	}
+	let userInput = "((OOC: Initialize new roleplay conversation by creating first message in this thread. If applicable, use provided response instructions, character cards, world scenarios or massage examples. Do not confirm your task, your output must be a new message from character's perspective. If character card is not provided, make up some interesting type and start roleplay with brief character introduction and world setup))";
+    let message = {role: "user", time: formatDate(), content: userInput};
+    let messages = model.get("activeThread");
+    messages.push(message);
+    model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
+    $("chat").get().scrollTop = $("chat").get().scrollHeight;
+    model.get("activeChatHandler")();
+    model.remove("savedResponse");
+    sendRequest(sendMessageHandler);
+    messages.pop();
 }
 
 $("chat-send-button").onclick(event => sendMessage());
@@ -392,7 +389,7 @@ function createAssistantMessage (container, index, message, messages) {
 	header.create("span").style("message-sender").text("Notes Keeper");
 	header.create("span").style("message-time").text(message["time"]);
 	let content = messageSection.create("div").style("message-content").html(markdownToHtml(message["content"]));
-	header.create("span").style("message-action").tooltip("Edit message").text("✎").onclick(event =>{
+	header.create("span").style("message-action").tooltip("Edit message").text("✎").onclick(event => {
 		content.clear();
 		let textArea = content.create("textarea").html(message["content"]);
 		textArea.height(textArea.get().scrollHeight + "px");
@@ -461,15 +458,17 @@ function createAssistantMessage (container, index, message, messages) {
 			});
 		}
 	});
-	let deleteButton = header.create("span").style("message-action").text("DELETE");
-    deleteButton.onclick(event => {
-        deleteButton.text("REALLY?").get().onclick = event => {
-            messages.splice(index);
-            model.update("activeChat");
-            model.get("activeChatHandler")();
-            saveSettings();
-        };
-    });
+	if (index == 0) {
+	    let deleteButton = header.create("span").style("message-action").text("DELETE");
+        deleteButton.onclick(event => {
+            deleteButton.text("REALLY?").get().onclick = event => {
+                messages.splice(index);
+                model.update("activeChat");
+                model.get("activeChatHandler")();
+                saveSettings();
+            };
+        });
+	}
 }
 
 function createThreadSwitcher (container, index, message, messages) {

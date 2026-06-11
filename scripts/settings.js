@@ -5,7 +5,9 @@ const modelsList = [
 	["meta-llama/llama-3.2-90b-vision-instruct", "Llama 3.2 90B"],
 	["meta-llama/llama-3.3-70b-instruct", "Llama 3.3 70B"],
 	["mistralai/mistral-nemo", "MistralAI Nemo"],
-	["deepseek/deepseek-chat-v3-0324", "Deepseek Chat V3"],
+	["deepseek/deepseek-chat-v3-0324", "Deepseek Chat 3"],
+	["deepseek/deepseek-v3.2", "Deepseek 3.2"],
+	["deepseek/deepseek-v4-flash", "Deepseek 4 Flash"],
 	["google/gemma-4-31b-it", "Gemma 4 31B"],
 	["x-ai/grok-4.20-beta", "Grok 4.20"],
 	["---", "Mistral AI"],
@@ -19,10 +21,11 @@ const modelsList = [
 ];
 
 const editPromptTemplate = "Rewrite your latest message precisely following user guidance. Latest last message is going to be replaced with whatever you create now. Do not mention the fact of editing at all. User instructions:";
+const systemPromptTemplate = "Your name is Note Keeper and you're an advanced AI. Your task is to assist user with any questions they have in friendly and tame manner. User may attach some notes to their queries and if so, they will be listed bellow";
 
 const settings = localStorage.getItem("GptNotesSettings") ? JSON.parse(localStorage.getItem("GptNotesSettings")) : ({
 	apiKey: "-- your api key --",
-	model: "meta-llama/llama-3-8b-instruct",
+	model: "deepseek/deepseek-chat-v3-0324",
 	models: modelsList,
 	maxTokens: 192,
 	contextSize: 20,
@@ -31,18 +34,18 @@ const settings = localStorage.getItem("GptNotesSettings") ? JSON.parse(localStor
 	randomLevel: 1,
 	repeatLevel: 1,
 	topP: 1,
-	systemPrompt: "Your name is Note Keeper and you're an advanced AI. Your task is to assist user with any questions they have in friendly and tame manner. User may attach some notes to their queries and if so, they will be listed bellow.",
+	systemPrompt: systemPromptTemplate,
 	editPrompt: editPromptTemplate,
 	notes: [],
 	chats: []
 });
 
-function saveSettings () {
+function saveSettings() {
 	localStorage.setItem("GptNotesSettings", JSON.stringify(settings));
 }
 
 if (!settings["model"]) {
-	settings["model"] = "meta-llama/llama-3-8b-instruct";	
+	settings["model"] = "deepseek/deepseek-chat-v3-0324";
 	saveSettings();
 }
 
@@ -95,7 +98,7 @@ let importContainer = $().create("div").style("clickable-light danger").html("&#
 importContainer.create("input").style("settings-input").attribute("type", "file").onchange(event => {
 	let file = event.target.files[0];
 	let reader = new FileReader();
-	reader.onload = function(e) {
+	reader.onload = function (e) {
 		let json = e.target.result;
 		localStorage.setItem("GptNotesSettings", json);
 		location.reload();
@@ -124,7 +127,7 @@ $("settings-section").add(Accordion(
 	$().create("div").style("clickable-light").html("&#10100; &#10101; EXPORT SETTINGS").onclick(event => {
 		const filename = "gpt-notes-backup.json";
 		const payload = settings;
-		const blob = new Blob([JSON.stringify(payload)], {type: "application/json"});
+		const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
 		link.setAttribute("href", url);
@@ -144,17 +147,17 @@ $("settings-section").add(Accordion(
 	Input("Context Size in Messages", settings["contextSize"], "Messages amount in memory...", value => {
 		settings["contextSize"] = parseInt(value);
 		saveSettings();
-	}),		
+	}),
 	Input("Use output tuning", settings["useTuning"], "Defines usage of response random, repetition penalty and new topic chance", value => {
 		settings["useTuning"] = value === "Yes" ? "Yes" : "No";
 		saveSettings();
 	}, ["Yes", "No"]),
-	
+
 	Input("Floating index", settings["floatingIndex"], "Defines random parameters deviation on each query", value => {
 		settings["floatingIndex"] = parseFloat(value);
 		saveSettings();
 	}, ["0", "0.1", "0.2", "0.3"]),
-	
+
 	Input("Level of Response Random", settings["randomLevel"], "Level of random for generator...", value => {
 		settings["randomLevel"] = parseFloat(value);
 		saveSettings();
@@ -171,7 +174,7 @@ $("settings-section").add(Accordion(
 
 let modelsAccordion = null;
 
-function reloadModels () {
+function reloadModels() {
 	if (modelsAccordion) {
 		$(modelsAccordion).destroy();
 	}
