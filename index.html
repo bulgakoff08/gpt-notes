@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>GPT Notes</title>
     <meta charset="utf-8"/>
@@ -132,6 +132,7 @@
 <script src="./scripts/nano.js"></script>
 <script src="./scripts/index.js"></script>
 <script src="./scripts/chat.js"></script>
+<script src="./scripts/actions.js"></script>
 <script src="./scripts/loader.js"></script>
 <script src="./scripts/notes.js"></script>
 <script src="./scripts/settings.js"></script>
@@ -147,11 +148,11 @@
         model.set("deselectVisible", value.size > 0);
     });
 
-    $("settings-button").onclick(event => toggle(model, "settingsVisible"));
+    $("settings-button").onclick(() => toggle(model, "settingsVisible"));
 
-    $("chat-visibility-button").onclick(event => toggle(model, "chatVisible"));
+    $("chat-visibility-button").onclick(() => toggle(model, "chatVisible"));
 
-    $("merge-notes-button").onclick(event => {
+    $("merge-notes-button").onclick(() => {
         let parent = model.get("parent");
         let children = model.get("children");
         children.forEach(child => child["parentId"] = parent["uuid"]);
@@ -161,12 +162,12 @@
         toast("Merged!");
     });
 
-    $("deselect-button").onclick(event => {
+    $("deselect-button").onclick(() => {
         model.get("selection").clear();
         model.update("selection");
     });
 
-    $("new-note-button").onclick(event => {
+    $("new-note-button").onclick(() => {
         saveEditedNote();
         let uuid = createUuid();
         let note = {uuid: uuid, tags: [], title: "", content: ""};
@@ -176,7 +177,7 @@
         loadIntoEditor(note);
     });
 
-    $("change-view-button").onclick(event => {
+    $("change-view-button").onclick(() => {
         let view = settings["view"] === "card" ? "table" : "card";
         settings["view"] = view;
         saveSettings();
@@ -184,9 +185,9 @@
         toast("View type changed to " + view);
     });
 
-    $("init-chat-button").onclick(event => initConversation());
+    $("init-chat-button").onclick(() => initConversation());
 
-    $("editor-cancel-button").onclick(event => {
+    $("editor-cancel-button").onclick(() => {
         model.set("editorVisible", false);
         model.remove("editUuid");
         $("editor-title-input").get().value = "";
@@ -194,7 +195,7 @@
         $("editor-content-input").get().value = "";
     });
 
-    $("editor-save-button").onclick(event => {
+    $("editor-save-button").onclick(() => {
         saveEditedNote();
         $("editor-title-input").get().value = "";
         $("editor-tags-input").get().value = "";

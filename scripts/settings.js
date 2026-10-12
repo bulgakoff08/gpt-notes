@@ -1,23 +1,27 @@
 const modelsList = [
 	["---", "openrouter.ai"],
-	["meta-llama/llama-3-70b-instruct", "Llama 3 70B"],
-	["meta-llama/llama-3.1-405b-instruct", "Llama 3.1 405B"],
-	["meta-llama/llama-3.2-90b-vision-instruct", "Llama 3.2 90B"],
-	["meta-llama/llama-3.3-70b-instruct", "Llama 3.3 70B"],
+	["meta-llama/llama-3-70b-instruct", "Llama 3 70b"],
+	["meta-llama/llama-3.1-405b-instruct", "Llama 3.1 405b"],
+	["meta-llama/llama-3.2-90b-vision-instruct", "Llama 3.2 90b"],
+	["meta-llama/llama-3.3-70b-instruct", "Llama 3.3 70b"],
+	["meta-llama/llama-4-maverick", "Llama 4 Maverick 17b"],
+	["meta/muse-spark-1.3-contributor", "Muse Spart 1.3 (contributor)"],
 	["mistralai/mistral-nemo", "MistralAI Nemo"],
 	["deepseek/deepseek-chat-v3-0324", "Deepseek Chat 3"],
 	["deepseek/deepseek-v3.2", "Deepseek 3.2"],
-	["deepseek/deepseek-v4-flash", "Deepseek 4 Flash"],
-	["google/gemma-4-31b-it", "Gemma 4 31B"],
+	["deepseek/deepseek-v4.1-flash", "Deepseek 4 Flash"],
+	["google/gemma-4-31b-it", "Gemma 4 31b"],
 	["x-ai/grok-4.20-beta", "Grok 4.20"],
+	["x-ai/grok-build-0.1", "Grok Build 0.1"],
+	["moonshotai/kimi-k3", "Moonshot AI Kimi K3"],
 	["---", "Mistral AI"],
 	["mistral-large-latest", "Mistral Large"],
 	["---", "Local LLM Studio"],
-	["llama3.2-8b-stheno", "Llama 3.2 Stheno 8B"],
-	["gemmasutra-9b", "Gemma 2 Gemmasutra 9B"],
-	["meta-llama-3-8b-instruct", "Llama 3 8B"],
-	["google/gemma-3-4b", "Gemma 3 4B"],
-	["google/gemma-4-e4b", "Gemma 4 4B"]
+	["llama3.2-8b-stheno", "Llama 3.2 Stheno 8b"],
+	["gemmasutra-9b", "Gemma 2 Gemmasutra 9b"],
+	["meta-llama-3-8b-instruct", "Llama 3 8b"],
+	["google/gemma-3-4b", "Gemma 3 4b"],
+	["google/gemma-4-e4b", "Gemma 4 4b"]
 ];
 
 const editPromptTemplate = "Rewrite your latest message precisely following user guidance. Latest last message is going to be replaced with whatever you create now. Do not mention the fact of editing at all. User instructions:";
@@ -99,7 +103,7 @@ importContainer.create("input").style("settings-input").attribute("type", "file"
 	let file = event.target.files[0];
 	let reader = new FileReader();
 	reader.onload = function (e) {
-		let json = e.target.result;
+		let json = String(e.target.result);
 		localStorage.setItem("GptNotesSettings", json);
 		location.reload();
 	};
@@ -124,10 +128,9 @@ $("settings-section").add(Accordion(
 		settings["editPrompt"] = value;
 		saveSettings();
 	}),
-	$().create("div").style("clickable-light").html("&#10100; &#10101; EXPORT SETTINGS").onclick(event => {
+	$().create("div").style("clickable-light").html("&#10100; &#10101; EXPORT SETTINGS").onclick(() => {
 		const filename = "gpt-notes-backup.json";
-		const payload = settings;
-		const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+		const blob = new Blob([JSON.stringify(settings)], { type: "application/json" });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
 		link.setAttribute("href", url);
@@ -143,7 +146,7 @@ $("settings-section").add(Accordion(
 	Input("Response Length in Tokens", settings["maxTokens"], "Response length in tokens...", value => {
 		settings["maxTokens"] = parseInt(value);
 		saveSettings();
-	}, ["100", "200", "500", "1000"]),
+	}, ["100", "200", "500", "1000", "2000"]),
 	Input("Context Size in Messages", settings["contextSize"], "Messages amount in memory...", value => {
 		settings["contextSize"] = parseInt(value);
 		saveSettings();
@@ -161,7 +164,7 @@ $("settings-section").add(Accordion(
 	Input("Level of Response Random", settings["randomLevel"], "Level of random for generator...", value => {
 		settings["randomLevel"] = parseFloat(value);
 		saveSettings();
-	}),
+	}, ["0.6", "0.7", "0.8", "0.9", "1"]),
 	Input("Level of Words Variety", settings["topP"], "Level of words variety for generator...", value => {
 		settings["topP"] = parseFloat(value);
 		saveSettings();
@@ -178,19 +181,14 @@ function reloadModels() {
 	if (modelsAccordion) {
 		$(modelsAccordion).destroy();
 	}
-	let modelButtons = [
-		/* $().create("div").style("clickable-light center border").text("+ Add New").onclick(event => {
-			model.set("addModelVisible", !Boolean(model.get("addModelVisible")));
-			toast("addModelVisible: " + model.get("addModelVisible"));
-		}).get() */
-	];
+	let modelButtons = [];
 	settings["models"].forEach(pair => {
 		if ("---" === pair[0]) {
 			let divider = $().create("div").style("divider");
 			divider.create("span").style("divider-label").text(pair[1]);
 			modelButtons.push(divider.get());
 		} else {
-			let button = $().create("div").style("clickable-light").text(pair[1]).onclick(event => {
+			let button = $().create("div").style("clickable-light").text(pair[1]).onclick(() => {
 				model.set("model", pair[0]);
 				settings["model"] = pair[0];
 				saveSettings();

@@ -218,7 +218,7 @@ function createControlPanel (note, index) {
 		});
 	});
 	if (note["parentId"]) {
-		controlPanel.create("div").style("clickable").tooltip("Exctract this note from parent").text("↪").onclick(event => {
+		controlPanel.create("div").style("clickable").tooltip("Extract this note from parent").text("↪").onclick(event => {
 			event.stopPropagation();
 			delete note["parentId"]
 			model.update("notes");
@@ -245,7 +245,7 @@ function createTagsPanel (note) {
 function saveEditedNote () {
 	if (model.get("editUuid")) {
 		model.get("notes").forEach(note => {
-			if (note["uuid"] == model.get("editUuid")) {
+			if (note["uuid"] === model.get("editUuid")) {
 				note["title"] = $("editor-title-input").get().value;
 				note["content"] = $("editor-content-input").get().value;
 				if ($("editor-tags-input").get().value.trim() === "") {
@@ -308,7 +308,7 @@ function loadEditorFiles (note) {
 			buttons.create("div").tooltip("Confirm attachment removal").text("✓").onclick(event => {
 				event.stopPropagation();
 				note["files"].splice(note["files"].indexOf(note), 1);
-				if (note["files"].length == 0) {
+				if (note["files"].length === 0) {
 					delete note["files"];
 				}
 				loadEditorFiles(note);

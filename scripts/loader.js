@@ -15,6 +15,7 @@ function sendRequest (handler) {
 		max_tokens: settings["maxTokens"],
 		messages: messages
 	};
+	console.log(requestBody);
 	if (settings["useTuning"] === "Yes") {
 		let temp = parseFloat((settings["randomLevel"] + getRandomInRange(settings["floatingIndex"])).toFixed(2));
 		let repeat = parseFloat((settings["repeatLevel"] + getRandomInRange(settings["floatingIndex"])).toFixed(2));
@@ -40,7 +41,7 @@ function sendRequest (handler) {
 	countdown();
 
 	const localEndpoint = "http://127.0.0.1:1234/v1/chat/completions";
-	const openrouterEndpoint = "https://openrouter.ai/api/v1/chat/completions";
+	const openRouterEndpoint = "https://openrouter.ai/api/v1/chat/completions";
 	const mistralEndpoint = "https://api.mistral.ai/v1/chat/completions";
 	const headers = (settings["format"] === "local" ? {
 		"Content-Type": "application/json"
@@ -57,7 +58,7 @@ function sendRequest (handler) {
 			content: "Response to: " + messages[messages.length - 1].content
 		});
 	} else {
-		let endpoint = openrouterEndpoint;
+		let endpoint = openRouterEndpoint;
 		if ("mistral" === settings["format"]) {
 			endpoint = mistralEndpoint;
 		}
@@ -87,18 +88,27 @@ function processResponse (data, handler) {
 	if (data["choices"]) {
 		if (data["choices"].length > 0) {
 			let entry = data["choices"][0]["message"];
-			handler({
-				role: entry["role"],
-				time: formatDate(),
-				content: removeBuggySymbols(entry["content"])
-			});
+			let content = "No content in response message";
+			if (entry["content"]) {
+			    content = removeBuggySymbols(entry["content"].trim());
+			}
+			console.log(content);
+			const separated = separateActions(content);
+			let message = {role: entry["role"], time: formatDate(), content: separated["message"]};
+			if (separated.actions.length > 0) {
+			    message["actions"] = separated.actions;
+			}
+			if (entry["reasoning"]) {
+			    message["reasoning"] = entry["reasoning"].trim();
+			}
+			handler(message);
 		}
 	}
 }
 
 function formatAttachments (notes) {
 	let result = [];
-	notes.forEach((note, uuid) => result.push(formatAttachment(note)));
+	notes.forEach(note => result.push(formatAttachment(note)));
 	return result.join("\n\n");
 }
 
@@ -110,11 +120,6 @@ function formatAttachment (note) {
 	}
 	result.push("Content: " + note["content"] + "\n");
 	return result.join("\n");
-}
-
-function replaceAll (input, pattern, replaceText) {
-	let result = input.replace(pattern, replaceText);
-	return result.indexOf(pattern) == -1 ? result : replaceAll(result, pattern, replaceText);
 }
 
 function removeBuggySymbols (input) {

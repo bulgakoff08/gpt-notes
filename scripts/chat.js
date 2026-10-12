@@ -1,4 +1,12 @@
-$("new-chat-button").onclick(event => {
+function showWaitingPlug () {
+	model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
+}
+
+function scrollChatBottom () {
+	$("chat").get().scrollTop = $("chat").get().scrollHeight;
+}
+
+$("new-chat-button").onclick(() => {
 	settings["chats"].push({
 		title: "New chat",
 		notes: [],
@@ -7,7 +15,7 @@ $("new-chat-button").onclick(event => {
 	model.set("chats", settings["chats"]);
 });
 
-$("new-group-button").onclick(event => {
+$("new-group-button").onclick(() => {
 	let groupName = prompt("Enter new chats group name", "New group");
 	if (groupName) {
 		settings["chatGroups"].push({
@@ -34,7 +42,7 @@ function sendMessage () {
 		let message;
 		let messages = model.get("activeThread");
 		if (editMode) {
-			if (messages.length == 0) {
+			if (messages.length === 0) {
 				toast("There are no AI messages yet, cannot send request to edit");
 				return;
 			}
@@ -47,8 +55,8 @@ function sendMessage () {
 			saveSettings();
 		}
 		$("chat-input").get().value = "";
-		model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
-		$("chat").get().scrollTop = $("chat").get().scrollHeight;
+		showWaitingPlug()
+		scrollChatBottom();
 		model.get("activeChatHandler")();
 		model.remove("savedResponse");
 		sendRequest(editMode ? editMessageHandler : sendMessageHandler);
@@ -62,17 +70,17 @@ function initConversation () {
     let message = {role: "user", time: formatDate(), content: userInput};
     let messages = model.get("activeThread");
     messages.push(message);
-    model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
-    $("chat").get().scrollTop = $("chat").get().scrollHeight;
+	showWaitingPlug();
+	scrollChatBottom();
     model.get("activeChatHandler")();
     model.remove("savedResponse");
     sendRequest(sendMessageHandler);
     messages.pop();
 }
 
-$("chat-send-button").onclick(event => sendMessage());
+$("chat-send-button").onclick(() => sendMessage());
 
-$("chat-input").get().onkeypress= event => {
+$("chat-input").get().onkeydown = event => {
 	if (event.key === "Enter") {
 		sendMessage();
 	}
@@ -168,7 +176,7 @@ function createChatEntry (container, chat, index, chats) {
 	model.get("chatsCreated").push(entry);
 	let nameSpan = entry.create("span").style("chat-history-title flex-one").text(chat["title"]);
 	let countSpan = entry.create("span").style("chat-history-messages").html(chat["messages"].length + " MSG");
-	let handler = event => {
+	let handler = () => {
 		let activeChat = model.get("activeChat");
 		model.get("chatsCreated").forEach(header => header.unstyle("selected"));
 		if (activeChat === chat) {
@@ -189,14 +197,14 @@ function createChatEntry (container, chat, index, chats) {
 	countSpan.onclick(handler);
 	let buttons = entry.create("div").style("list-item-actions");
 
-	buttons.create("div").tooltip("Duplicate chat").text("▚").onclick(event => {
+	buttons.create("div").tooltip("Duplicate chat").text("▚").onclick(() => {
 		chats.push(JSON.parse(JSON.stringify(chat)));
 		model.update("chats");
 		toast("Chat copied");
 		saveSettings();
 	});
 
-	buttons.create("div").tooltip("Rename chat").text("✎").onclick(event => {
+	buttons.create("div").tooltip("Rename chat").text("✎").onclick(() => {
 		let name = prompt("Please enter new name for this chat", chat["title"]);
 		if (name !== null) {
 			if (name.trim() === "") {
@@ -209,21 +217,21 @@ function createChatEntry (container, chat, index, chats) {
 	});
 
 	if (chat["archived"]) {
-		buttons.create("div").tooltip("Restore from archive").text("⤴").onclick(event => {
+		buttons.create("div").tooltip("Restore from archive").text("⤴").onclick(() => {
 			delete chat["archived"];
 			saveSettings();
 			toast("Chat restored from archive");
 			model.update("chats");
 		});
 	} else if (chat["group"]) {
-		buttons.create("div").tooltip("Restore from archive").text("⤴").onclick(event => {
+		buttons.create("div").tooltip("Restore from archive").text("⤴").onclick(() => {
 			delete chat["group"];
 			saveSettings();
 			toast("Chat moved to general list");
 			model.update("chats");
 		});
 	} else {
-		buttons.create("div").tooltip("Archive chat").text("⤵").onclick(event => {
+		buttons.create("div").tooltip("Archive chat").text("⤵").onclick(() => {
 			chat["archived"] = true;
 			saveSettings();
 			toast("Chat moved to archive");
@@ -235,7 +243,7 @@ function createChatEntry (container, chat, index, chats) {
 	removeButon.onclick(event => {
 		event.stopPropagation();
 		removeButon.destroy();
-		buttons.create("div").tooltip("Confirm chat removal").text("✓").onclick(event => {
+		buttons.create("div").tooltip("Confirm chat removal").text("✓").onclick(() => {
 			chats.splice(index, 1);
 			model.remove("activeChat");
 			saveSettings();
@@ -261,7 +269,7 @@ model.listen("activeChat", chat => {
 		setSelection(chat["notes"]);
 		printMessages($("chat"), chat["messages"]);
 		model.set("chatVisible", true);
-		model.set("initVisible", chat["messages"].length == 0)
+		model.set("initVisible", chat["messages"].length === 0)
 	} else {
 		model.remove("activeChatHandler");
 		model.remove("activeChatItem");
@@ -292,21 +300,39 @@ function sendMessageHandler (message) {
 	}
 	model.update("activeChat");
 	model.get("activeChatHandler")();
-	$("chat").get().scrollTop = $("chat").get().scrollHeight;
+	scrollChatBottom();
 }
 
 function editMessageHandler (message) {
 	model.get("activeThread").pop();
 	model.get("activeThread").pop();
-	model.get("activeThread").push(message);
-	saveSettings();
-	if (model.get("waitingLabel")) {
-		model.get("waitingLabel").destroy();
-		model.remove("waitingLabel");
-	}
-	model.update("activeChat");
-	model.get("activeChatHandler")();
-	$("chat").get().scrollTop = $("chat").get().scrollHeight;
+	sendMessageHandler(message);
+}
+
+function attachDeleteButton (container, messageIndex, messages) {
+	let deleteButton = container.create("span").style("message-action").text("DELETE");
+	deleteButton.onclick(() => {
+		deleteButton.text("REALLY?").get().onclick = () => {
+			messages.splice(messageIndex);
+			model.update("activeChat");
+			model.get("activeChatHandler")();
+			saveSettings();
+		};
+	});
+}
+
+function attachEditButton (container, messageContainer, message) {
+	container.create("span").style("message-action").tooltip("Edit message").text("✎").onclick(() => {
+		messageContainer.clear();
+		let textArea = messageContainer.create("textarea").html(message["content"]);
+		textArea.height(textArea.get().scrollHeight + "px");
+		textArea.onchange(() => {
+			message["content"] = textArea.get().value;
+			textArea.destroy();
+			messageContainer.html(markdownToHtml(message["content"]));
+			saveSettings();
+		});
+	});
 }
 
 function createUserMessage (container, index, message, messages) {
@@ -316,46 +342,26 @@ function createUserMessage (container, index, message, messages) {
 	header.create("span").style("message-sender").text("Me");
 	header.create("span").style("message-time").text(message["time"]);
 	let content = messageSection.create("div").style("message-content").html(markdownToHtml(message["content"]));
-
-	header.create("span").style("message-action").tooltip("Edit message").text("✎").onclick(event =>{
-		content.clear();
-		let textArea = content.create("textarea").text(message["content"]);
-		textArea.height(textArea.get().scrollHeight + "px");
-		textArea.onchange(event => {
-			message["content"] = textArea.get().value;
-			textArea.destroy();
-			content.html(markdownToHtml(message["content"]));
-			saveSettings();
-		});
-	});
-
-	let deleteButton = header.create("span").style("message-action").text("DELETE");
-	deleteButton.onclick(event => {
-		deleteButton.text("REALLY?").get().onclick = event => {
-			messages.splice(index);
-			model.update("activeChat");
-			model.get("activeChatHandler")();
-			saveSettings();
-		};
-	});
+	attachEditButton(header, content, message);
+	attachDeleteButton(header, index, messages);
 
 	let resendButton = header.create("span").style("message-action").text("RE-SEND");
-	resendButton.onclick(event =>{
-		if (index == messages.length - 1) {
-			model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
-			$("chat").get().scrollTop = $("chat").get().scrollHeight;
+	resendButton.onclick(() =>{
+		if (index === messages.length - 1) {
+			showWaitingPlug();
+			scrollChatBottom();
 			model.remove("regens");
 			model.set("activeThread", messages);
 			sendRequest(sendMessageHandler);
 		} else {
-			resendButton.text("CONFIRM RE-SEND?").get().onclick = event => {
+			resendButton.text("CONFIRM RE-SEND?").get().onclick = () => {
 				messages.splice(index + 1);
 				model.set("activeThread", messages);
 				model.remove("regens");
 				saveSettings();
 				model.update("activeChat");
-				model.set("waitingLabel", $("chat").create("div").style("waiting-indicator assistant-message message").text("Typing..."));
-				$("chat").get().scrollTop = $("chat").get().scrollHeight;
+				showWaitingPlug();
+				scrollChatBottom();
 				sendRequest(sendMessageHandler);
 			};
 		}
@@ -365,10 +371,10 @@ function createUserMessage (container, index, message, messages) {
 function getIconForMessage () {
 	let result = null;
 	if (model.has("selection")) {
-		model.get("selection").forEach((note, uuid) => {
+		model.get("selection").forEach(note => {
 			if (!result && note["files"]) {
 				note["files"].forEach(file => {
-					if (file["type"] == "image/png" || file["type"] == "image/jpeg" || file["type"] == "image/bmp") {
+					if (file["type"] === "image/png" || file["type"] === "image/jpeg" || file["type"] === "image/bmp") {
 						result = file["content"];
 					}
 				});
@@ -388,19 +394,28 @@ function createAssistantMessage (container, index, message, messages) {
 	let header = messageSection.create("div").style("message-header");
 	header.create("span").style("message-sender").text("Notes Keeper");
 	header.create("span").style("message-time").text(message["time"]);
+	if (message["reasoning"]) {
+	    let reasoningShow = false;
+	    let reasoningSection = messageSection.create("div").style("message-reasoning").html(markdownToHtml("```Show reasoning```"));
+	    reasoningSection.onclick(() => {
+	        if (reasoningShow) {
+	            reasoningSection.html(markdownToHtml("```Show reasoning```"));
+	        } else {
+	            reasoningSection.html(markdownToHtml("```" + message["reasoning"] + "```"));
+	        }
+	        reasoningShow = !reasoningShow;
+	    });
+	}
 	let content = messageSection.create("div").style("message-content").html(markdownToHtml(message["content"]));
-	header.create("span").style("message-action").tooltip("Edit message").text("✎").onclick(event => {
-		content.clear();
-		let textArea = content.create("textarea").html(message["content"]);
-		textArea.height(textArea.get().scrollHeight + "px");
-		textArea.onchange(even => {
-			message["content"] = textArea.get().value;
-			textArea.destroy();
-			content.html(markdownToHtml(message["content"]));
-			saveSettings();
-		});
-	});
-	header.create("span").style("message-action").tooltip("Create new note with this message").text("NOTE").onclick(event => {
+	if (message["actions"]) {
+	    messageSection.create("div").style("divider");
+	    message["actions"].forEach(actionSpec => {
+	        const pane = messageSection.create("div").style("message-actions");
+	        processAction(actionSpec, pane);
+	    });
+	}
+	attachEditButton(header, content, message);
+	header.create("span").style("message-action").tooltip("Create new note with this message").text("NOTE").onclick(() => {
 		model.get("notes").unshift({
 			uuid: createUuid(),
 			title: "Message (" + message["time"] + ")",
@@ -410,7 +425,7 @@ function createAssistantMessage (container, index, message, messages) {
 		toast("New note created");
 	});
 	if (index > 0) {
-		header.create("span").style("message-action").text("BRANCH").onclick(event => {
+		header.create("span").style("message-action").text("BRANCH").onclick(() => {
 			let copy = {role: message["role"], time: message["time"], content: message["content"]};
 			let messagesLeftover = messages.splice(index, messages.length - index);
 			messages.push({
@@ -422,15 +437,15 @@ function createAssistantMessage (container, index, message, messages) {
 		});
 	}
 	let holdButton = header.create("span").style("message-action").tooltip("Copy this message to buffer").text("▚");
-	holdButton.onclick(event => {
+	holdButton.onclick(() => {
 		model.set("savedResponse", message["content"]);
 		holdButton.destroy();
 		saveSettings();
 		toast("Message put to buffer");
 	});
-	if (model.get("savedResponse") && index == messages.length - 1) {
+	if (model.get("savedResponse") && index === messages.length - 1) {
 		let restoreButton = header.create("span").style("message-action").tooltip("Paste message from buffer").text("↩");
-		restoreButton.onclick(event => {
+		restoreButton.onclick(() => {
 			restoreButton.destroy();
 			message["content"] = model.get("savedResponse");
 			content.html(markdownToHtml(message["content"]));
@@ -448,26 +463,18 @@ function createAssistantMessage (container, index, message, messages) {
 		sendRequest(sendMessageHandler);
 	}
 	let regenButton = header.create("span").style("message-action").text("REGEN");
-	regenButton.onclick(event => {
-		if (index == messages.length - 1) {
+	regenButton.onclick(() => {
+		if (index === messages.length - 1) {
 			regenerateMessage();
 		} else {
 			regenButton.destroy();
-			header.create("span").style("message-action").text("REALLY?").onclick(event => {
+			header.create("span").style("message-action").text("REALLY?").onclick(() => {
 				regenerateMessage();
 			});
 		}
 	});
-	if (index == 0) {
-	    let deleteButton = header.create("span").style("message-action").text("DELETE");
-        deleteButton.onclick(event => {
-            deleteButton.text("REALLY?").get().onclick = event => {
-                messages.splice(index);
-                model.update("activeChat");
-                model.get("activeChatHandler")();
-                saveSettings();
-            };
-        });
+	if (index === 0) {
+		attachDeleteButton(header, index, messages);
 	}
 }
 
@@ -476,9 +483,9 @@ function createThreadSwitcher (container, index, message, messages) {
 	let counter = switcher.create("span").text("Thread " + (message["index"] + 1) + " / " + message["threads"].length);
 	let threadContainer = container.create("div").style("thread-container");
 	let thread = message["threads"][message["index"]];
-	switcher.onclick(event => {
+	switcher.onclick(() => {
 		message["index"] = message["index"] + 1;
-		if (message["index"] ==  message["threads"].length) {
+		if (message["index"] ===  message["threads"].length) {
 			message["index"] = 0;
 		}
 		counter.text("Thread " + (message["index"] + 1) + " / " + message["threads"].length);
@@ -504,7 +511,7 @@ function createThreadSwitcher (container, index, message, messages) {
 			event.stopPropagation();
 			message["threads"].splice(message["index"], 1);
 			message["index"] = 0;
-			if (message["threads"].length == 1) {
+			if (message["threads"].length === 1) {
 				messages.pop();
 				messages.push(...message["threads"][0]);
 				model.set("activeThread", messages);

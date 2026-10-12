@@ -1,4 +1,4 @@
-const $ = function (selector, context = document) {
+const $ = function (selector = null, context = document) {
 	const element = "string" === typeof selector ? context.getElementById(selector) : selector;
 	return {
 		add: function (child) {

@@ -6,7 +6,7 @@ function Accordion (title, ...children) {
 	children.forEach(child => {
 		contentWrapper.add(child);
 	});
-	header.onclick(event => {
+	header.onclick(() => {
 		header.toggle("accordion-header-active");
 		content.toggle("accordion-content-active");
 	});
@@ -26,7 +26,7 @@ function HandledAccordion (title, opened, handler, ...children) {
 	children.forEach(child => {
 		contentWrapper.add(child);
 	});
-	header.onclick(event => {
+	header.onclick(() => {
 		header.toggle("accordion-header-active");
 		content.toggle("accordion-content-active");
 		state = !state;
@@ -42,7 +42,7 @@ function Input (title, value, placeholder, handler, options) {
 		let ribbon = wrapper.create("div").style("input-ribbon");
 		ribbon.create("span").text(title + ": ");
 		for (let i = 0; i < options.length; i++) {
-			let span = ribbon.create("span").text(options[i]).style("input-option").onclick(event => {
+			ribbon.create("span").text(options[i]).style("input-option").onclick(() => {
 				input.get().value = options[i];
 				handler(input.get().value);
 			});
@@ -56,7 +56,7 @@ function Input (title, value, placeholder, handler, options) {
 	wrapper.add(input.get());
 	input.attribute("placeholder", placeholder);
 	input.get().value = value;
-	input.onchange(event => handler(input.get().value));
+	input.onchange(() => handler(input.get().value));
 	return wrapper.get();
 }
 
@@ -67,7 +67,7 @@ function Textarea (title, rows, value, placeholder, handler) {
 	textarea.attribute("placeholder", placeholder);
 	textarea.attribute("rows", rows);
 	textarea.get().value = value || "";
-	textarea.onchange(event => handler(textarea.get().value));
+	textarea.onchange(() => handler(textarea.get().value));
 	return wrapper.get();
 }
 
@@ -80,7 +80,7 @@ function Popup (title, width, height, ...children) {
 	header.create("span").text(title);
 	let content = wrapper.create("div").style("popup-root-panel");
 	children.forEach(entry => content.add(entry));
-	backdrop.onclick(event => {
+	backdrop.onclick(() => {
 		backdrop.destroy();
 		wrapper.destroy();
 	});
@@ -104,7 +104,7 @@ function toggle (model, key) {
 }
 
 function generateUuidPart (mask) {
-	return mask.replace(/[x]/g, function() {
+	return mask.replace(/x/g, function() {
 		return (Math.random() * 16 | 0).toString(16);
 	});
 }
@@ -128,8 +128,8 @@ function formatDate () {
 	let date = now.getDate() > 9 ? now.getDate() : "0" + now.getDate();
 	let month = now.getMonth() > 8 ? now.getMonth() + 1 : "0" + (now.getMonth() + 1);
 	
-	let hours = now.getHours() > 9 ? now.getHours() : "0" + now.getHours();;
-	let minutes = now.getMinutes() > 9 ? now.getMinutes() : "0" + now.getMinutes();;
+	let hours = now.getHours() > 9 ? now.getHours() : "0" + now.getHours();
+	let minutes = now.getMinutes() > 9 ? now.getMinutes() : "0" + now.getMinutes();
 	
 	return date + "." + month + "." + now.getUTCFullYear() + " " + hours + ":" + minutes;
 }
